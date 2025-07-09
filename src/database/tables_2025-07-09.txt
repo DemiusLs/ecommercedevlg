@@ -1,0 +1,51 @@
+CREATE TABLE `prints`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_artist` INT NOT NULL,
+    `name` VARCHAR(255) NULL,
+    `creation` DATE NULL,
+    `genres` VARCHAR(255) NULL,
+    `price` DECIMAL(8, 2) NULL,
+    `description` TEXT NULL,
+    `quantity` INT NULL,
+    `img_url` VARCHAR(255) NULL,
+    `created_at` DATETIME NOT NULL,
+    `updated` DATETIME NOT NULL
+);
+CREATE TABLE `orders`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `print_id` BIGINT NOT NULL,
+    `total_price` DECIMAL(8, 2) NULL,
+    `created_at` DATETIME NULL,
+    `order_status` INT NULL
+);
+CREATE TABLE `artists`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NULL,
+    `description` TEXT NULL,
+    `created_at` DATETIME NOT NULL,
+    `updated_at` DATETIME NOT NULL
+);
+CREATE TABLE `order_print`(
+    `id_print` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_orderd` INT NOT NULL,
+    `quantity` INT NULL,
+    `price` DECIMAL(8, 2) NULL
+);
+CREATE TABLE `shippings`(
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `order_id` INT NOT NULL,
+    `mail` VARCHAR(255) NULL,
+    `full_name` VARCHAR(255) NULL,
+    `address` VARCHAR(255) NULL,
+    `city` VARCHAR(255) NULL,
+    `postal_code` VARCHAR(255) NULL,
+    `country` VARCHAR(255) NULL
+);
+ALTER TABLE
+    `shippings` ADD CONSTRAINT `shippings_order_id_foreign` FOREIGN KEY(`order_id`) REFERENCES `orders`(`id`);
+ALTER TABLE
+    `order_print` ADD CONSTRAINT `order_print_id_orderd_foreign` FOREIGN KEY(`id_orderd`) REFERENCES `orders`(`id`);
+ALTER TABLE
+    `prints` ADD CONSTRAINT `prints_id_artist_foreign` FOREIGN KEY(`id_artist`) REFERENCES `artists`(`id`);
+ALTER TABLE
+    `order_print` ADD CONSTRAINT `order_print_id_print_foreign` FOREIGN KEY(`id_print`) REFERENCES `prints`(`id`);

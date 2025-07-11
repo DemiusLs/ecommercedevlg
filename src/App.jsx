@@ -1,16 +1,21 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './context/AppContext';
+import GuestLayout from './layout/GuestLayout';
+import Homepage from './pages/Homepage';
+import Gallery from './pages/Gallery';
+import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
+import WelcomePopup from './components/WelcomePopup.jsx';
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { AppProvider } from './context/AppContext'
-
-
-function App() {
-
-
+const App = () => {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <Router>
         <GuestLayout>
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -25,9 +30,9 @@ function App() {
           </Routes>
           <WelcomePopup />
         </GuestLayout>
-      </BrowserRouter>
+      </Router>
     </AppProvider>
-  )
-}
+  );
+};
 
 export default App

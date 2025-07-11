@@ -7,7 +7,10 @@ import styles from './Cart.module.css';
 const Cart = () => {
 
   return (
-    <></>
+    
+    <>
+    <h1>Ciao</h1>
+    </>
   );
 };
 

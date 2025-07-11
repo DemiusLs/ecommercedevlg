@@ -1,7 +1,7 @@
 
 import React from 'react';
-import AppHeader from './AppHeader';
-import AppFooter from './AppFooter';
+import AppHeader from './Header/AppHeader';
+import AppFooter from './Footer/AppFooter';
 import styles from './GuestLayout.module.css';
 
 const GuestLayout = ({ children }) => {

@@ -1,0 +1,57 @@
+@media (max-width: 768px) {
+  .container {
+    height: 70px;
+    padding: 0 15px;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .navOpen {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .searchForm {
+    width: 150px;
+  }
+
+  .searchInput {
+    width: 100px;
+  }
+
+  .menuToggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .logoText {
+    font-size: 1.25rem;
+  }
+
+  .logoSubtext {
+    font-size: 0.7rem;
+  }
+
+  .searchForm {
+    width: 120px;
+  }
+
+  .searchInput {
+    width: 80px;
+  }
+}

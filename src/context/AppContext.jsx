@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const AppContext = createContext();
@@ -74,11 +75,31 @@ export const AppProvider = ({ children }) => {
 
     // Check if user has visited before
     useEffect(() => {
+        const fetchProducts = async () => {
+            dispatch({ type: 'SET_LOADING', payload: true });
+
+            try {
+                const response = await axios.get('http://localhost:3000/api/prints');
+
+                if (response.data && Array.isArray(response.data.data)) {
+                    dispatch({ type: 'SET_PRODUCTS', payload: response.data.data });
+                } else {
+                    dispatch({ type: 'SET_ERROR', payload: 'Formato dei dati non valido' });
+                }
+            } catch (error) {
+                dispatch({ type: 'SET_ERROR', payload: 'Errore nel caricamento dei prodotti' });
+            }
+
+        };
+
+        fetchProducts();
+
         const hasVisited = localStorage.getItem('boolshop_visited');
         if (hasVisited) {
             dispatch({ type: 'HIDE_WELCOME_POPUP' });
         }
     }, []);
+
 
     const value = {
         ...state,

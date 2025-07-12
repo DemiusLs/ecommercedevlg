@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { newsletterAPI } from '../services/api';
 import styles from './WelcomePopup.module.css';
 
 const WelcomePopup = () => {

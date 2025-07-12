@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
-import GuestLayout from './layout/GuestLayout';
+import GuestLayout from './layout/GuestLayout/GuestLayout';
 import Homepage from './pages/Homepage';
 import Gallery from './pages/Gallery';
 import ProductDetail from './pages/ProductDetail';
@@ -9,8 +9,8 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import NotFound from './pages/NotFound';
-import WelcomePopup from './components/WelcomePopup.jsx';
+import NotFound from './pages/NotFound/NotFound.jsx';
+import WelcomePopup from './components/WelcomePopUp/WelcomePopup.jsx';
 
 const App = () => {
   return (

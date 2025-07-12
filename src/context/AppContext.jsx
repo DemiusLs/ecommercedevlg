@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AppContext = createContext();
@@ -15,8 +15,8 @@ export const AppProvider = ({ children }) => {
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get('http://localhost:3001/api/prints');
-            if (res.data?.data) {
+            const res = await axios.get('http://localhost:3000/api/prints');
+            if (res.data.data) {
                 setProducts(res.data.data);
             } else {
                 setError('Dati non validi');

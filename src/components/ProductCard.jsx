@@ -1,28 +1,27 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ product }) => {
-  const { dispatch } = useAppContext();
+  const { addToCart } = useAppContext();
+
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (product.inStock === 0) return;
 
-    dispatch({
-      type: 'ADD_TO_CART',
-      payload: {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-        maxStock: product.inStock
-      }
+    if (product.stock === 0) return;
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.img_url,
+      quantity: 1,
+      maxStock: product.stock
     });
+
   };
 
   const formatPrice = (price) => {
@@ -43,36 +42,35 @@ const ProductCard = ({ product }) => {
         />
         {product.isNew && <span className={styles.badge}>Nuovo</span>}
         {product.onSale && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta</span>}
-        {product.inStock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
-        
+        {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
+
         <button
-          className={`${styles.addToCartButton} ${
-            product.inStock === 0 ? styles.disabled : ''
-          }`}
+          className={`${styles.addToCartButton} ${product.inStock === 0 ? styles.disabled : ''
+            }`}
           onClick={handleAddToCart}
-          disabled={product.inStock === 0}
+          disabled={product.stock === 0}
         >
-          {product.inStock === 0 ? 'Esaurito' : 'Aggiungi al carrello'}
+          {product.stock === 0 ? 'Esaurito' : 'Aggiungi al carrello'}
         </button>
       </div>
 
       <div className={styles.content}>
         <h3 className={styles.name}>{product.name}</h3>
         <p className={styles.category}>{product.category}</p>
-        
+
         <div className={styles.priceContainer}>
           <span className={styles.price}>{formatPrice(product.price)}</span>
-          {product.originalPrice && (
+          {product.original_price && (
             <span className={styles.originalPrice}>
-              {formatPrice(product.originalPrice)}
+              {formatPrice(product.original_price)}
             </span>
           )}
         </div>
 
         <div className={styles.stock}>
-          {product.inStock > 0 ? (
+          {product.stock > 0 ? (
             <span className={styles.inStock}>
-              {product.inStock < 5 ? `Solo ${product.inStock} rimasti` : 'Disponibile'}
+              {product.stock < 5 ? `Solo ${product.stock} rimasti` : 'Disponibile'}
             </span>
           ) : (
             <span className={styles.outOfStock}>Non disponibile</span>

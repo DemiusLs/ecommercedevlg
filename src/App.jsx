@@ -12,21 +12,14 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import WelcomePopup from './components/WelcomePopup.jsx';
 
-<<<<<<< HEAD
-const App = () => {
-=======
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { AppProvider } from './context/AppContext'
-import GuestLayout from "./layout/GuestLayout"
+
 
 
 
 function App() {
 
 
->>>>>>> 062f2304c117a871f851c48c702fe616a5f567a8
+
   return (
     <AppProvider>
       <Router>

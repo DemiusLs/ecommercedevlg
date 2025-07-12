@@ -5,11 +5,8 @@ const NotFound = () => {
   
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
+    console.error("404 Error: Page not found");
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

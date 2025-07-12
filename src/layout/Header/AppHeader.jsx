@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
 import styles from './AppHeader.module.css';
-import mediaquery from './AppHeadermediaquery.module.css'
+import { useAppContext } from '../../context/AppContext';
+// import mediaquery from './AppHeadermediaquery.module.css'
 
 const AppHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +27,7 @@ const AppHeader = () => {
   ];
 
   return (
+
     <header className={styles.header}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>

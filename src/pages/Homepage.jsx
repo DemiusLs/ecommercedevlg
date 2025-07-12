@@ -1,14 +1,15 @@
 
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
-import ProductCarousel from '../components/ProductCarousel';
-import mockData from '../data/mockProducts.json';
-import styles from './Homepage.module.css';
 
 const Homepage = () => {
   return (
-    <></>
+   <>
+<<<<<<< HEAD
+    <h1>Ciao</h1>
+    </>
+=======
+   <h1>ciao</h1>
+    </> 
+>>>>>>> 062f2304c117a871f851c48c702fe616a5f567a8
   );
 };
 

@@ -2,16 +2,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import styles from './Cart.module.css';
+import styles from './ProductCard.module.css';
 
-const Cart = () => {
+const ProductCard = ({ product }) => {
+  
 
   return (
-    
-    <>
-    <h1>Ciao</h1>
-    </>
+
+    <></>
   );
 };
 
-export default Cart;
+export default ProductCard;

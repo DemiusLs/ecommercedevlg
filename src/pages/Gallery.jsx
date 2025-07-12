@@ -1,10 +1,12 @@
-
+import ProductFilters from "../components/ProductFilters";
 
 
 const Gallery = () => {  
   return (
     <>
-    <h1>Ciao</h1>
+    <h1>Galleria Stampe</h1>
+
+    <ProductFilters/>
     </>
   );
 };

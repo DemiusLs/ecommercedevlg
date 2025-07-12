@@ -18,17 +18,18 @@ const Gallery = () => {
 
   useEffect(() => {
     if (!Array.isArray(productsFromContext)) return;
+    
     let products = [...productsFromContext];
 
 
-    // Apply filters
-    if (filter === 'new') {
-      products = products.filter(p => p.isNew);
-    } else if (filter === 'sale') {
-      products = products.filter(p => p.onSale);
-    } else if (filter === 'featured') {
-      products = products.filter(p => p.isFeatured);
-    }
+    // // Apply filters
+    // if (filter === 'new') {
+    //   products = products.filter(p => p.isNew);
+    // } else if (filter === 'sale') {
+    //   products = products.filter(p => p.onSale);
+    // } else if (filter === 'featured') {
+    //   products = products.filter(p => p.isFeatured);
+    // }
 
     // Apply search
     if (query) {
@@ -79,9 +80,8 @@ const Gallery = () => {
         <ProductFilters />
 
         <div className={styles.content}>
-          <div className={`${styles.grid} ${
-            viewMode === 'list' ? styles.listView : styles.gridView
-          }`}>
+          <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView
+            }`}>
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

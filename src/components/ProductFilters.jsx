@@ -2,14 +2,14 @@ import { useAppContext } from '../context/AppContext';
 import styles from './ProductFilters.module.css';
 
 const ProductFilter = () => {
-  const { viewMode, sortBy, dispatch } = useAppContext();
+  const { viewMode, sortBy, setViewMode, setSortBy } = useAppContext();
 
   const handleViewModeChange = (mode) => {
-    dispatch({ type: 'SET_VIEW_MODE', payload: mode });
+    setViewMode(mode);
   };
 
   const handleSortChange = (e) => {
-    dispatch({ type: 'SET_SORT_BY', payload: e.target.value });
+    setSortBy(e.target.value);
   };
 
   return (

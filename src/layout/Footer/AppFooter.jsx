@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './AppFooter.module.css';
-// import mediaquery from './AppFootermediaquery.css'
+import mediaquery from './AppFootermediaquery.css'
 
 const AppFooter = () => {
   return (

@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { useContext, useEffect, useState } from "react";
-import { useAppContext } from '../context/AppContext';
-import styles from './Homepage.module.css';
-import ProductCarousel from '../components/ProductCarousel';
-import { Link } from 'react-router-dom';
-
-const Homepage = () => {
-
-  const { products, } = useAppContext()
-
-  const [heroSlide, setHeroSlide] = useState(0);
-=======
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -24,7 +11,6 @@ import Gallery from "./Gallery";
 const Homepage = () => {
   const { dispatch, shoWelcomePopup, products } = useAppContext();
   const [heroSlide, setHeroSlide] = useState(0)
->>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
 
 
   const heroSlides = [
@@ -46,19 +32,6 @@ const Homepage = () => {
   ];
 
   useEffect(() => {
-<<<<<<< HEAD
-
-
-
-
-    const interval = setInterval(() => {
-      setHeroSlide(prev => (prev + 1) % heroSlides.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-=======
     axios.get('http://localhost:3001/prints')
       .then(res => {
         dispatch({ type: 'SET_PRODUCTS', payload: res.data })
@@ -73,17 +46,11 @@ const Homepage = () => {
 
     return () => clearInterval(interval);
   }, [dispatch])
->>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
 
   const newProducts = products.filter(p => p.isNew);
   const saleProducts = products.filter(p => p.onSale);
   const featuredProducts = products.filter(p => p.isFeatured);
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
   return (
     <div className={styles.homepage}>
       {/* Welcome popup */}
@@ -127,12 +94,6 @@ const Homepage = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
-     
-
-    </div>
-
-=======
       {/* Carousels */}
       <section className={styles.carousel}>
         <div className={styles.container}>
@@ -163,7 +124,6 @@ const Homepage = () => {
       </section>
 
     </div>
->>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
   );
 };
 

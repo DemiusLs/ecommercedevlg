@@ -126,8 +126,8 @@ const ProductDetail = () => {
             <h1 className={styles.productName}>{product.name}</h1>
             <p className={styles.productDescription}>{product.description}</p>
 
-            <div className={styles.priceSection}>
-              <span className={styles.currentPrice}>{formatPrice(product.price)}</span>
+            <div className={styles.priceContainer}>
+              <span className={styles.price}>{formatPrice(product.price - (product.price * product.discount / 100))}</span>
               {product.originalPrice && (
                 <span className={styles.originalPrice}>
                   {formatPrice(product.originalPrice)}

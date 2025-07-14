@@ -50,7 +50,7 @@ const ProductCard = ({ product }) => {
           onClick={handleAddToCart}
           disabled={product.stock === 0}
         >
-          {product.stock === 0 ? 'Esaurito' : 'Aggiungi al carrello'}
+          {product.stock === 0 ? 'Esaurito' : '🛒'}
         </button>
       </div>
 

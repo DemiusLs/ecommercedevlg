@@ -39,20 +39,26 @@ const ProductDetail = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    if (product.stock === 0 ||product.stock - product.quantity === 0) return;
+ const handleAddToCart = () => {
+  const cartItem = cart.find(item => item.id === product.id);
+  const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
-    addToCart({
-      ...product,
-      quantity: quantity,
+  // somma di già presenti + quelli che vuoi aggiungere
+  const totalRequested = alreadyInCart + quantity;
 
-    });
+  if (totalRequested > product.stock) {
+    alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
+    return;
+  }
 
+  addToCart({
+    ...product,
+    quantity,
+  });
 
+  alert(`${product.name} aggiunto al carrello!`);
+};
 
-    // Show success feedback
-    alert(`${product.name} aggiunto al carrello!`);
-  };
 
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) {

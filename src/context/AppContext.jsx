@@ -63,6 +63,7 @@ export const AppProvider = ({ children }) => {
 
     const value = {
         products,
+        setProducts,
         cart,
         isLoading,
         error,

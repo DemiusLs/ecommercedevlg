@@ -6,12 +6,14 @@ import styles from './ProductDetail.module.css';
 const ProductDetail = () => {
 
   const { slug } = useParams();
-  const { addToCart, products } = useAppContext()
+  const { addToCart, products, cart } = useAppContext()
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  
+
 
   useEffect(() => {
     const foundProduct = products.find(p => p.slug === slug);
@@ -38,13 +40,15 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-    if (product.stock === 0) return;
+    if (product.stock === 0 ||product.stock - product.quantity === 0) return;
 
     addToCart({
       ...product,
       quantity: quantity,
 
     });
+
+
 
     // Show success feedback
     alert(`${product.name} aggiunto al carrello!`);
@@ -70,7 +74,9 @@ const ProductDetail = () => {
     product.img_url
   ];
 
-
+  console.log(product)
+  console.log(cart)
+  
 
   return (
     <div className={styles.productDetail}>
@@ -129,7 +135,7 @@ const ProductDetail = () => {
             </div>
 
             <div className={styles.stockInfo}>
-              {product.stock > 0 ? (
+              {product.stock < 5 ? (
                 <span className={styles.inStock}>
                   {product.stock < 5 ? `Solo ${product.stock} disponibili!` : 'Disponibile'}
                 </span>

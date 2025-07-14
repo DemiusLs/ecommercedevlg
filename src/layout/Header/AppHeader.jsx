@@ -31,8 +31,7 @@ const AppHeader = () => {
     <header className={styles.header}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <span className={styles.logoText}>BoolShop</span>
-          <span className={styles.logoSubtext}>Art Prints</span>
+          <img src="/logo-header-1.png" alt="" className={styles.logoImage}/>
         </Link>
 
         <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>

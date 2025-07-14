@@ -160,6 +160,18 @@
   transition: all 0.3s ease;
 }
 
+.logoImage {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.05);
+}
+
+
 @media (max-width: 768px) {
   .container {
     height: 70px;

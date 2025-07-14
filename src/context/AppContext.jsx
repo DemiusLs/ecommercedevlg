@@ -15,7 +15,7 @@ export const AppProvider = ({ children }) => {
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get('http://localhost:3000/api/prints');
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/prints`);
             if (res.data.data) {
                 setProducts(res.data.data);
             } else {

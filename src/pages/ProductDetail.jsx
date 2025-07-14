@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
 
-const ProductDetail = () => {
+const ProductDetail = /**
+ * Description placeholder
+ *
+ * @returns {*} 
+ */
+() => {
 
   const { slug } = useParams();
   const { addToCart, products, cart } = useAppContext()
@@ -14,14 +19,16 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   
 
-
+     
   useEffect(() => {
+    if (!products || products.length === 0) return;
+
     const foundProduct = products.find(p => p.slug === slug);
     if (foundProduct) {
       setProduct(foundProduct);
     }
     setIsLoading(false);
-  }, [slug]);
+  }, [slug, products]);
 
   if (isLoading) {
     return <div className={styles.loading}>Caricamento...</div>;
@@ -47,11 +54,6 @@ const ProductDetail = () => {
       quantity: quantity,
 
     });
-
-
-
-    // Show success feedback
-    alert(`${product.name} aggiunto al carrello!`);
   };
 
   const handleQuantityChange = (newQuantity) => {
@@ -74,8 +76,6 @@ const ProductDetail = () => {
     product.img_url
   ];
 
-  console.log(product)
-  console.log(cart)
   
 
   return (

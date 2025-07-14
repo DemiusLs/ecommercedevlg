@@ -20,6 +20,7 @@ const ProductCard = ({ product }) => {
       image: product.img_url,
       quantity: 1,
       maxStock: product.stock
+
     });
 
   };
@@ -40,8 +41,10 @@ const ProductCard = ({ product }) => {
           className={styles.image}
           loading="lazy"
         />
-        {product.isNew && <span className={styles.badge}>Nuovo</span>}
-        {product.onSale && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta</span>}
+
+
+        {product.status === 1 && <span className={styles.badge}>Nuovo</span>}
+        {product.discount && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta {product.discount}%</span>}
         {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
 
         <button
@@ -59,10 +62,10 @@ const ProductCard = ({ product }) => {
         <p className={styles.category}>{product.category}</p>
 
         <div className={styles.priceContainer}>
-          <span className={styles.price}>{formatPrice(product.price)}</span>
-          {product.original_price && (
+          <span className={styles.price}>{formatPrice(product.price - (product.price * product.discount / 100))}</span>
+          {product.discount && (
             <span className={styles.originalPrice}>
-              {formatPrice(product.original_price)}
+              {formatPrice(product.price)}
             </span>
           )}
         </div>

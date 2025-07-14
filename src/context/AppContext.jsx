@@ -42,12 +42,25 @@ export const AppProvider = ({ children }) => {
     const addToCart = (product) => {
         setCart(prevCart => {
             const existing = prevCart.find(item => item.id === product.id);
+
+            const existingQuantity = existing ? existing.quantity : 0;
+            const totalRequested = existingQuantity + product.quantity;
+
+            if (totalRequested > product.stock) {
+                alert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`);
+                return prevCart;
+            } else {
+                // Show success feedback
+                alert(`${product.name} aggiunto al carrello!`)
+            }
+
             if (existing) {
                 return prevCart.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + product.quantity }
                         : item
                 );
+
             }
             return [...prevCart, product];
         });

@@ -12,7 +12,18 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound/NotFound.jsx';
 import WelcomePopup from './components/WelcomePopup.jsx';
 
+<<<<<<< HEAD
 const App = () => {
+=======
+
+
+
+
+function App() {
+
+
+
+>>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
   return (
     <AppProvider>
       <Router>

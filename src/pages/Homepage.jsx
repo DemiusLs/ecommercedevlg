@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useContext, useEffect, useState } from "react";
 import { useAppContext } from '../context/AppContext';
 import styles from './Homepage.module.css';
@@ -9,6 +10,21 @@ const Homepage = () => {
   const { products, } = useAppContext()
 
   const [heroSlide, setHeroSlide] = useState(0);
+=======
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import WelcomePopup from "../components/WelcomePopup"
+import ProductCarousel from "../components/ProductCarousel"
+import axios from "axios";
+import styles from './Homepage.module.css';
+import Gallery from "./Gallery";
+
+
+const Homepage = () => {
+  const { dispatch, shoWelcomePopup, products } = useAppContext();
+  const [heroSlide, setHeroSlide] = useState(0)
+>>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
 
 
   const heroSlides = [
@@ -30,6 +46,7 @@ const Homepage = () => {
   ];
 
   useEffect(() => {
+<<<<<<< HEAD
 
 
 
@@ -41,13 +58,32 @@ const Homepage = () => {
     return () => clearInterval(interval);
   }, []);
 
+=======
+    axios.get('http://localhost:3001/prints')
+      .then(res => {
+        dispatch({ type: 'SET_PRODUCTS', payload: res.data })
+      })
+      .catch(error => {
+        console.error("Errore nel caricamento dei prodotti:", error);
+      })
+
+    const interval = setInterval(() => {
+      setHeroSlide(prev => (prev + 1) & heroSlides.length)
+    }, 5000)
+
+    return () => clearInterval(interval);
+  }, [dispatch])
+>>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
 
   const newProducts = products.filter(p => p.isNew);
   const saleProducts = products.filter(p => p.onSale);
   const featuredProducts = products.filter(p => p.isFeatured);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
   return (
     <div className={styles.homepage}>
       {/* Welcome popup */}
@@ -91,10 +127,43 @@ const Homepage = () => {
         </div>
       </section>
 
+<<<<<<< HEAD
      
 
     </div>
 
+=======
+      {/* Carousels */}
+      <section className={styles.carousel}>
+        <div className={styles.container}>
+          {newProducts.length > 0 && (
+            <ProductCarousel
+              title="Nuovi Arrivi"
+              products={newProducts}
+              viewAllLink="/gallery?filter_new"
+            />
+          )}
+
+          {saleProducts.length > 0 && (
+            <ProductCarousel
+              title="In Offerta"
+              products={saleProducts}
+              viewAllLink="/gallery?filter=sale"
+            />
+          )}
+
+          {featuredProducts.length > 0 && (
+            <ProductCarousel
+              title="Scelti per Te"
+              products={featuredProducts}
+              viewAllLink="/gallery?filter=featured"
+            />
+          )}
+        </div>
+      </section>
+
+    </div>
+>>>>>>> fe54755b299a88d6cfd446cdbdc0bb41cd732a48
   );
 };
 

@@ -18,7 +18,7 @@ const Gallery = () => {
 
   useEffect(() => {
     if (!Array.isArray(productsFromContext)) return;
-    
+
     let products = [...productsFromContext];
 
 
@@ -33,10 +33,13 @@ const Gallery = () => {
 
     // Apply search
     if (query) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(query.toLowerCase()) ||
-        p.category.toLowerCase().includes(query.toLowerCase())
-      );
+      products = products.filter(p => {
+        const nameMatch = p.name && p.name.toLowerCase().includes(query.toLowerCase());
+        const categoryMatch = p.category && p.category.toLowerCase().includes(query.toLowerCase());
+        return nameMatch || categoryMatch;
+      });
+
+
     }
 
     // Apply sorting

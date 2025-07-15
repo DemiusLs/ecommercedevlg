@@ -1,16 +1,31 @@
+import { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductFilters.module.css';
+import { useSearchParams } from 'react-router-dom';
 
 const ProductFilter = () => {
   const { viewMode, sortBy, setViewMode, setSortBy } = useAppContext();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
+    searchParams.set('view', mode);
+    setSearchParams(searchParams);
   };
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
+    searchParams.set('sort', e.target.value);
+    setSearchParams(searchParams);
   };
+
+  useEffect(() => {
+    handleViewModeChange('grid');
+    searchParams.set('sort', 'newest');
+    setSearchParams(searchParams);
+
+
+  }, [])
 
   return (
     <div className={styles.filters}>

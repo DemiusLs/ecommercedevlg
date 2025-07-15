@@ -1,16 +1,22 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
+
+
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
+    const [searchParams] = useSearchParams();
+    const initialViewMode = searchParams.get('view') || 'grid';
+    const initialSortBy = searchParams.get('sort') || 'newest';
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [showWelcomePopup, setShowWelcomePopup] = useState(true);
-    const [sortBy, setSortBy] = useState("name");
-    const [viewMode, setViewMode] = useState("grid");
+    const [sortBy, setSortBy] = useState(initialSortBy);
+    const [viewMode, setViewMode] = useState(initialViewMode);
 
     const fetchProducts = async () => {
         setIsLoading(true);
@@ -29,14 +35,12 @@ export const AppProvider = ({ children }) => {
     };
 
     useEffect(() => {
-
-
         fetchProducts();
-
         const visited = localStorage.getItem('boolshop_visited');
         if (visited) {
             setShowWelcomePopup(false);
         }
+
     }, []);
 
     const addToCart = (product) => {

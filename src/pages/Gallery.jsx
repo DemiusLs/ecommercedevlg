@@ -10,11 +10,12 @@ const Gallery = () => {
   const { viewMode, sortBy, products: productsFromContext = [] } = useAppContext();
 
 
-  const [searchParams] = useSearchParams();
+  const [searchParams ] = useSearchParams();
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const filter = searchParams.get('filter');
   const query = searchParams.get('q');
+  
 
   useEffect(() => {
     if (!Array.isArray(productsFromContext)) return;

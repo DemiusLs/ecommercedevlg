@@ -19,8 +19,9 @@ function App() {
 
 
   return (
-    <AppProvider>
-      <Router>
+    
+      <AppProvider>
+
         <GuestLayout>
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -35,8 +36,8 @@ function App() {
           </Routes>
           <WelcomePopup />
         </GuestLayout>
-      </Router>
-    </AppProvider>
+      </AppProvider>
+    
   );
 };
 

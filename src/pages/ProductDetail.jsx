@@ -41,15 +41,29 @@ const ProductDetail = () => {
     );
   }
 
+
   const handleAddToCart = () => {
     if (product.stock === 0 || product.stock - product.quantity === 0) return;
 
-    addToCart({
-      ...product,
-      quantity: quantity,
 
-    });
-  };
+  // somma di già presenti + quelli che vuoi aggiungere
+  const totalRequested = alreadyInCart + quantity;
+
+
+  if (totalRequested > product.stock) {
+    alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
+    return;
+  }
+
+  addToCart({
+    ...product,
+    quantity,
+  });
+
+  alert(`${product.name} aggiunto al carrello!`);
+};
+
+
 
   /**
    * Description placeholder
@@ -121,8 +135,8 @@ const ProductDetail = () => {
             <h1 className={styles.productName}>{product.name}</h1>
             <p className={styles.productDescription}>{product.description}</p>
 
-            <div className={styles.priceSection}>
-              <span className={styles.currentPrice}>{formatPrice(product.price)}</span>
+            <div className={styles.priceContainer}>
+              <span className={styles.price}>{formatPrice(product.price - (product.price * product.discount / 100))}</span>
               {product.originalPrice && (
                 <span className={styles.originalPrice}>
                   {formatPrice(product.originalPrice)}

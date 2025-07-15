@@ -12,7 +12,12 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound/NotFound.jsx';
 import WelcomePopup from './components/WelcomePopup.jsx';
 
-const App = () => {
+
+
+function App() {
+
+
+
   return (
     <AppProvider>
       <Router>

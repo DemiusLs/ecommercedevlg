@@ -1,14 +1,16 @@
-import { useContext, useEffect, useState } from "react";
-import { useAppContext } from '../context/AppContext';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import WelcomePopup from "../components/WelcomePopup"
+import ProductCarousel from "../components/ProductCarousel"
+import axios from "axios";
 import styles from './Homepage.module.css';
-import ProductCarousel from '../components/ProductCarousel';
-import { Link } from 'react-router-dom';
+import Gallery from "./Gallery";
+
 
 const Homepage = () => {
-
-  const { products, } = useAppContext()
-
-  const [heroSlide, setHeroSlide] = useState(0);
+  const { dispatch, shoWelcomePopup, products } = useAppContext();
+  const [heroSlide, setHeroSlide] = useState(0)
 
 
   const heroSlides = [
@@ -30,23 +32,24 @@ const Homepage = () => {
   ];
 
   useEffect(() => {
-
-
-
+    axios.get('http://localhost:3001/prints')
+      .then(res => {
+        dispatch({ type: 'SET_PRODUCTS', payload: res.data })
+      })
+      .catch(error => {
+        console.error("Errore nel caricamento dei prodotti:", error);
+      })
 
     const interval = setInterval(() => {
-      setHeroSlide(prev => (prev + 1) % heroSlides.length);
-    }, 5000);
+      setHeroSlide(prev => (prev + 1) & heroSlides.length)
+    }, 5000)
 
     return () => clearInterval(interval);
-  }, []);
-
+  }, [dispatch])
 
   const newProducts = products.filter(p => p.isNew);
   const saleProducts = products.filter(p => p.onSale);
   const featuredProducts = products.filter(p => p.isFeatured);
-
-
 
   return (
     <div className={styles.homepage}>
@@ -91,10 +94,36 @@ const Homepage = () => {
         </div>
       </section>
 
-     
+      {/* Carousels */}
+      <section className={styles.carousel}>
+        <div className={styles.container}>
+          {newProducts.length > 0 && (
+            <ProductCarousel
+              title="Nuovi Arrivi"
+              products={newProducts}
+              viewAllLink="/gallery?filter_new"
+            />
+          )}
+
+          {saleProducts.length > 0 && (
+            <ProductCarousel
+              title="In Offerta"
+              products={saleProducts}
+              viewAllLink="/gallery?filter=sale"
+            />
+          )}
+
+          {featuredProducts.length > 0 && (
+            <ProductCarousel
+              title="Scelti per Te"
+              products={featuredProducts}
+              viewAllLink="/gallery?filter=featured"
+            />
+          )}
+        </div>
+      </section>
 
     </div>
-
   );
 };
 

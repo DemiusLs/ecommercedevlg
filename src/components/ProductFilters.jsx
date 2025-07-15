@@ -20,8 +20,9 @@ const ProductFilter = () => {
   };
 
   useEffect(() => {
-    handleViewModeChange('grid');
-    searchParams.set('sort', 'newest');
+
+    handleViewModeChange(viewMode);
+    searchParams.set('sort', sortBy);
     setSearchParams(searchParams);
 
 

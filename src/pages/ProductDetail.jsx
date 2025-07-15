@@ -43,25 +43,27 @@ const ProductDetail = () => {
 
 
   const handleAddToCart = () => {
-    if (product.stock === 0 || product.stock - product.quantity === 0) return;
+    // if (product.stock === 0 || product.stock - product.quantity === 0) return;
+    const cartItem = cart.find(item => item.id === product.id);
+    const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
 
-  // somma di già presenti + quelli che vuoi aggiungere
-  const totalRequested = alreadyInCart + quantity;
+    // somma di già presenti + quelli che vuoi aggiungere
+    const totalRequested = alreadyInCart + quantity;
 
 
-  if (totalRequested > product.stock) {
-    alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
-    return;
-  }
+    if (totalRequested > product.stock) {
+      alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
+      return;
+    }
 
-  addToCart({
-    ...product,
-    quantity,
-  });
+    addToCart({
+      ...product,
+      quantity,
+    });
 
-  alert(`${product.name} aggiunto al carrello!`);
-};
+    alert(`${product.name} aggiunto al carrello!`);
+  };
 
 
 
@@ -152,7 +154,7 @@ const ProductDetail = () => {
             <div className={styles.stockInfo}>
               {product.stock > 0 ? (
                 <span className={styles.inStock}>
-                  {`Solo ${product.stock} disponibili!` }
+                  {`Solo ${product.stock} disponibili!`}
                 </span>
               ) : (
                 <span className={styles.outOfStock}>Non disponibile</span>

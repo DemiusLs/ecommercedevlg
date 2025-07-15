@@ -50,7 +50,7 @@ const WelcomePopup = () => {
         <div className={styles.content}>
           <h2 className={styles.title}>Benvenuto in BoolShop!</h2>
           <p className={styles.subtitle}>
-            Scopri la nostra collezione di stampe d'arte esclusive
+            Iscriviti alla nostra newsletter per non perderti i nuovi arrivi e il buono sconto del 10%
           </p>
 
           <form onSubmit={handleSubmit} className={styles.form}>

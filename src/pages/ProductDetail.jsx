@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
@@ -12,16 +12,18 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  
+
 
 
   useEffect(() => {
+    if (!products || products.length === 0) return;
+
     const foundProduct = products.find(p => p.slug === slug);
     if (foundProduct) {
       setProduct(foundProduct);
     }
     setIsLoading(false);
-  }, [slug]);
+  }, [slug, products]);
 
   if (isLoading) {
     return <div className={styles.loading}>Caricamento...</div>;
@@ -39,12 +41,14 @@ const ProductDetail = () => {
     );
   }
 
- const handleAddToCart = () => {
-  const cartItem = cart.find(item => item.id === product.id);
-  const alreadyInCart = cartItem ? cartItem.quantity : 0;
+
+  const handleAddToCart = () => {
+    if (product.stock === 0 || product.stock - product.quantity === 0) return;
+
 
   // somma di già presenti + quelli che vuoi aggiungere
   const totalRequested = alreadyInCart + quantity;
+
 
   if (totalRequested > product.stock) {
     alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
@@ -60,6 +64,12 @@ const ProductDetail = () => {
 };
 
 
+
+  /**
+   * Description placeholder
+   *gestisce la la variazione della quantita
+   * @param {*} newQuantity 
+   */
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) {
       setQuantity(newQuantity);
@@ -80,9 +90,8 @@ const ProductDetail = () => {
     product.img_url
   ];
 
+
   console.log(product)
-  console.log(cart)
-  
 
   return (
     <div className={styles.productDetail}>
@@ -99,8 +108,8 @@ const ProductDetail = () => {
                 alt={product.name}
                 className={styles.productImage}
               />
-              {product.isNew && <span className={styles.badge}>Nuovo</span>}
-              {product.onSale && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta</span>}
+              {product.status === 1 && <span className={styles.badge}>Nuovo</span>}
+              {product.discount && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta</span>}
               {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
             </div>
 
@@ -133,17 +142,17 @@ const ProductDetail = () => {
                   {formatPrice(product.originalPrice)}
                 </span>
               )}
-              {product.onSale && (
+              {product.discount && (
                 <span className={styles.discount}>
-                  -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+                  -{product.discount}%
                 </span>
               )}
             </div>
 
             <div className={styles.stockInfo}>
-              {product.stock < 5 ? (
+              {product.stock > 0 ? (
                 <span className={styles.inStock}>
-                  {product.stock < 5 ? `Solo ${product.stock} disponibili!` : 'Disponibile'}
+                  {`Solo ${product.stock} disponibili!` }
                 </span>
               ) : (
                 <span className={styles.outOfStock}>Non disponibile</span>

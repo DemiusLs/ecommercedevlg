@@ -7,13 +7,39 @@ const WelcomePopup = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const [discountCode, setDiscountCode] = useState("")
+  const [copied, setCopied] = useState(false)
+
+  // Funzione per generare codici random
+
+  const generateCode = () => {
+    const prefix = "BOOL"
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase()
+    return `${prefix} - ${randomPart}`;
+  };
 
   useEffect(() => {
     const alreadyVisited = localStorage.getItem('boolshop_visited');
     if (!alreadyVisited) {
       setVisible(true);
     }
+    //codice sconto /////////////////////////////////////////////////////////
+    const saveCode = localStorage.getItem("discountCode")
+    if (saveCode) {
+      setDiscountCode(saveCode)
+    } else {
+      const newCode = generateCode()
+      setDiscountCode(newCode)
+      localStorage.getItem("discountCode", newCode)
+    }
+
   }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(discountCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  };
 
   const handleClose = () => {
     setVisible(false);
@@ -40,6 +66,7 @@ const WelcomePopup = () => {
 
   if (!visible) return null;
 
+
   return (
     <div className={styles.overlay}>
       <div className={styles.popup}>
@@ -52,6 +79,14 @@ const WelcomePopup = () => {
           <p className={styles.subtitle}>
             Iscriviti alla nostra newsletter per non perderti i nuovi arrivi e il buono sconto del 10%
           </p>
+
+          <div className={styles.discountBoxe}>
+            <span className={styles.code}>{discountCode}</span>
+            <button onClick={handleCopy} className={styles.copyButton}>
+              {copied ? "✅ Copiato!" : "Copia"}
+            </button>
+          </div>
+          <p>Usa questo codice al checkout per ricevere lo sconto.</p>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <input
@@ -72,9 +107,8 @@ const WelcomePopup = () => {
           </form>
 
           {message && (
-            <p className={`${styles.message} ${
-              message.includes('Grazie') ? styles.success : styles.error
-            }`}>
+            <p className={`${styles.message} ${message.includes('Grazie') ? styles.success : styles.error
+              }`}>
               {message}
             </p>
           )}

@@ -142,20 +142,19 @@
 }
 
 @media (max-width: 768px) {
-  .content {
-    padding: 1rem;
-  }
-
-  .name {
-    font-size: 1rem;
-  }
-
-  .price {
-    font-size: 1.1rem;
-  }
-
   .addToCartButton {
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    position: static;
+    margin-top: 1rem;
+    width: 100%;
+    opacity: 1 !important;
+    transform: none !important;
+    border-radius: 6px;
+    background: #1a1a1a;
+  }
+
+  .card:hover .addToCartButton {
+    opacity: 1;
+    transform: none;
   }
 }
+

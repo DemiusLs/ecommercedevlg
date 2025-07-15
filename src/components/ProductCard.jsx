@@ -68,13 +68,7 @@ const ProductCard = ({ product }) => {
         {product.discount && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta {product.discount}%</span>}
         {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
 
-        <button
-          className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
-          onClick={handleAddToCart}
-          disabled={product.stock === 0}
-        >
-          {product.stock === 0 ? 'Esaurito' : '🛒'}
-        </button>
+        
       </div>
 
       <div className={styles.content}>
@@ -98,6 +92,14 @@ const ProductCard = ({ product }) => {
           ) : (
             <span className={styles.outOfStock}>Non disponibile</span>
           )}
+          <button
+          className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
+          onClick={handleAddToCart}
+          disabled={product.stock === 0}
+        >
+          {product.stock === 0 ? 'Esaurito' : '🛒'}
+        </button>
+
         </div>
       </div>
     </Link>

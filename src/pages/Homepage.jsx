@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import WelcomePopup from "../components/WelcomePopup"
 import ProductCarousel from "../components/ProductCarousel"
-import axios from "axios";
 import styles from './Homepage.module.css';
-import Gallery from "./Gallery";
+
 
 
 const Homepage = () => {
@@ -31,21 +30,7 @@ const Homepage = () => {
     }
   ];
 
-  useEffect(() => {
-    axios.get('http://localhost:3001/prints')
-      .then(res => {
-        dispatch({ type: 'SET_PRODUCTS', payload: res.data })
-      })
-      .catch(error => {
-        console.error("Errore nel caricamento dei prodotti:", error);
-      })
-
-    const interval = setInterval(() => {
-      setHeroSlide(prev => (prev + 1) & heroSlides.length)
-    }, 5000)
-
-    return () => clearInterval(interval);
-  }, [dispatch])
+  
 
   const newProducts = products.filter(p => p.isNew);
   const saleProducts = products.filter(p => p.onSale);

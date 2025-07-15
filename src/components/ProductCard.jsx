@@ -4,7 +4,9 @@ import { useAppContext } from '../context/AppContext';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useAppContext();
+  const { addToCart, cart } = useAppContext();
+
+
 
 
   const handleAddToCart = (e) => {
@@ -13,8 +15,19 @@ const ProductCard = ({ product }) => {
 
     if (product.stock === 0) return;
 
+
+    const cartItem = cart.find(item => item.slug === product.slug);
+    const currentQuantity = cartItem ? cartItem.quantity : 0;
+
+
+    if (currentQuantity >= product.stock) {
+      alert(`Hai già aggiunto tutte le ${product.stock} unità disponibili di "${product.name}" al carrello.`);
+      return;
+    }
+
+    // if (product.stock < cartProd.maxStock) {
     addToCart({
-      id: product.id,
+      slug: product.slug,
       name: product.name,
       price: product.price,
       image: product.img_url,
@@ -22,6 +35,14 @@ const ProductCard = ({ product }) => {
       maxStock: product.stock
 
     });
+
+
+
+    // } else {
+    //   console.log("non aggiungibile")
+    // }
+
+
 
   };
 
@@ -48,8 +69,7 @@ const ProductCard = ({ product }) => {
         {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
 
         <button
-          className={`${styles.addToCartButton} ${product.inStock === 0 ? styles.disabled : ''
-            }`}
+          className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
           onClick={handleAddToCart}
           disabled={product.stock === 0}
         >

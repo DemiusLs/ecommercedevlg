@@ -42,9 +42,11 @@ const ProductDetail = () => {
   }
 
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+
     // if (product.stock === 0 || product.stock - product.quantity === 0) return;
-    const cartItem = cart.find(item => item.id === product.id);
+    e.stopPropagation();
+    const cartItem = cart.find(item => item.slug === product.slug);
     const alreadyInCart = cartItem ? cartItem.quantity : 0;
 
 

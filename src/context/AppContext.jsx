@@ -41,7 +41,7 @@ export const AppProvider = ({ children }) => {
 
     const addToCart = (product) => {
         setCart(prevCart => {
-            const existing = prevCart.find(item => item.id === product.id);
+            const existing = prevCart.find(item => item.slug === product.slug);
 
             const existingQuantity = existing ? existing.quantity : 0;
             const totalRequested = existingQuantity + product.quantity;
@@ -56,7 +56,7 @@ export const AppProvider = ({ children }) => {
 
             if (existing) {
                 return prevCart.map(item =>
-                    item.id === product.id
+                    item.slug === product.slug
                         ? { ...item, quantity: item.quantity + product.quantity }
                         : item
                 );
@@ -66,8 +66,8 @@ export const AppProvider = ({ children }) => {
         });
     };
 
-    const removeFromCart = (productId) => {
-        setCart(prevCart => prevCart.filter(item => item.id !== productId));
+    const removeFromCart = (productSlug) => {
+        setCart(prevCart => prevCart.filter(item => item.slug !== productSlug));
     };
 
     const clearCart = () => {

@@ -128,8 +128,11 @@ export const AppProvider = ({ children }) => {
 
     // rimuovi prodotto da confronto
     const removeFromCompare = (slug) => {
-        setCompareList((prev) => prev.filter(p => p.slug !== slug));
+        setCompareList(prev => prev.filter(p => p.slug !== slug));
     };
+
+
+
     const value = {
         products,
         setProducts,
@@ -150,6 +153,7 @@ export const AppProvider = ({ children }) => {
         isInWishlist,
         addToWishlist,
         removeFromWishlist,
+        compareList,
         addToCompare,
         removeFromCompare
     };

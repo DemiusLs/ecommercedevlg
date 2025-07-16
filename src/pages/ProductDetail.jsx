@@ -3,33 +3,57 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaBalanceScale } from 'react-icons/fa';
+
 
 
 const ProductDetail = () => {
 
   const { slug } = useParams();
-  const { addToCart, products, cart, wishlist, addToWishlist, removeFromWishlist } = useAppContext()
+  const { addToCart,
+    products,
+    cart,
+    wishlist,
+    addToWishlist,
+    removeFromWishlist,
+    compareList,
+    addToCompare,
+    removeFromCompare } = useAppContext()
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  
+
 
   const isWishlisted = product && wishlist.some(item => item.slug === product.slug);
+  const isInCompareList = product && compareList?.some(item => item.slug === product.slug);
 
-
+  //logo per aggiunta o rimozione dalla wishlist
   const toggleWishlist = () => {
-  if (!product) return;  // evita errori se product non è ancora caricato
+    if (!product) return;  // evita errori se product non è ancora caricato
 
-  if (isWishlisted) {
-    removeFromWishlist(product.slug);
-  } else {
-    addToWishlist(product);
-  }
-};
+    if (isWishlisted) {
+      removeFromWishlist(product.slug);
+    } else {
+      addToWishlist(product);
+    }
+  };
+  // logo per inserire in comparazione prodotto
+  const handleCompare = () => {
+    if (!product) return;
 
+    if (isInCompareList) {
+      removeFromCompare(product.slug);
+    } else {
+      if (compareList.length >= 3) {
+        alert("Puoi confrontare al massimo 3 prodotti.");
+        return;
+      }
+      addToCompare(product);
+    }
+  };
 
   useEffect(() => {
     if (!products || products.length === 0) return;
@@ -159,6 +183,13 @@ const ProductDetail = () => {
                 ) : (
                   <FaRegHeart className={styles.heartIconEmpty} />
                 )}
+              </button>
+              <button
+                className={styles.compareButton}
+                onClick={() => handleCompare(product)}
+                title="Confronta"
+              >
+                <FaBalanceScale />
               </button>
 
             </h1>

@@ -12,6 +12,7 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound/NotFound.jsx';
 import WelcomePopup from './components/WelcomePopup.jsx';
 import WishlistPage from './pages/WishlistPage';
+import Compare from './pages/Compare';
 
 
 
@@ -23,7 +24,6 @@ function App() {
   return (
     
       <AppProvider>
-
         <GuestLayout>
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -35,12 +35,12 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/compare" element={<Compare />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <WelcomePopup />
         </GuestLayout>
-      </AppProvider>
-    
+      </AppProvider>    
   );
 };
 

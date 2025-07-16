@@ -7,16 +7,29 @@ const WelcomePopup = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const [discountCode, setDiscountCode] = useState("")
+  const [copied, setCopied] = useState(false)
+
+  // Funzione per generare codici random
+
+  const generateCode = () => {
+    const prefix = "BOOL"
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase()
+    return `${prefix} - ${randomPart}`;
+  };
 
   useEffect(() => {
     const alreadyVisited = localStorage.getItem('boolshop_visited');
     if (!alreadyVisited) {
       setVisible(true);
     }
+    //codice sconto /////////////////////////////////////////////////////////
+    const newCode = generateCode()
+    setDiscountCode(newCode)
   }, []);
 
 
-  
+
 
 
   const handleClose = () => {
@@ -44,7 +57,7 @@ const WelcomePopup = () => {
                     <p>Ciao ${email},</p>
                     <p>Grazie mille per esserti iscritto alla newsletter di BoolShop!</p>
                     <p>Come promesso, ecco il tuo <strong>buono sconto del 10%</strong> sul tuo prossimo acquisto:</p>
-                    <h3 style="color: #007bff;">CODICE_SCONTO_10PERCENTO</h3>
+                    <h3 style="color: #007bff;">${discountCode}</h3>
                     <p>Speriamo tu possa trovare qualcosa di fantastico!</p>
                     <p>A presto,</p>
                     <p>Il Team di BoolShop</p>
@@ -94,6 +107,7 @@ const WelcomePopup = () => {
           <p className={styles.subtitle}>
             Iscriviti alla nostra newsletter per non perderti i nuovi arrivi e il buono sconto del 10%
           </p>
+          <p>Codice sconto {discountCode} </p>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <input

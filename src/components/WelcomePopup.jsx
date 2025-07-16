@@ -24,9 +24,11 @@ const WelcomePopup = () => {
       setVisible(true);
     }
     //codice sconto /////////////////////////////////////////////////////////
+
     const newCode = generateCode()
     setDiscountCode(newCode)
   }, []);
+
 
 
 

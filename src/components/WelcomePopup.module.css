@@ -163,3 +163,33 @@
     font-size: 0.95rem;
   }
 }
+
+.discountBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.code {
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: #f0f0f0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.copyButton {
+  padding: 0.5rem 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.copyButton:hover {
+  background: #333;
+}

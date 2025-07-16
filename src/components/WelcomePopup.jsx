@@ -28,12 +28,6 @@ const WelcomePopup = () => {
     const newCode = generateCode()
     setDiscountCode(newCode)
   }, []);
-
-
-
-
-
-
   const handleClose = () => {
     setVisible(false);
     localStorage.setItem('boolshop_visited', 'true');

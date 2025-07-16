@@ -82,6 +82,7 @@ export const AppProvider = ({ children }) => {
         products,
         setProducts,
         cart,
+        setCart,
         isLoading,
         error,
         showWelcomePopup,

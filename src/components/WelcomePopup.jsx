@@ -24,6 +24,7 @@ const WelcomePopup = () => {
       setVisible(true);
     }
     //codice sconto /////////////////////////////////////////////////////////
+    
     const saveCode = localStorage.getItem("discountCode")
     if (saveCode) {
       setDiscountCode(saveCode)

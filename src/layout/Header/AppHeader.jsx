@@ -31,7 +31,7 @@ const AppHeader = () => {
     <header className={styles.header}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <img src="/logo-header-1.png" alt="" className={styles.logoImage}/>
+          <img src="/logo-header-1.png" alt="" className={styles.logoImage} />
         </Link>
 
         <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
@@ -60,6 +60,10 @@ const AppHeader = () => {
               🔍
             </button>
           </form>
+
+          <Link to="/wishlist" className={styles.wishlistButton}>
+            ❤️
+          </Link>
 
           <Link to="/cart" className={styles.cartButton}>
             🛒

@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
+    const [wishlist, setWishlist] = useState([]);
     const [searchParams] = useSearchParams();
     const initialViewMode = searchParams.get('view') || 'grid';
     const initialSortBy = searchParams.get('sort') || 'newest';
@@ -17,6 +18,9 @@ export const AppProvider = ({ children }) => {
     const [showWelcomePopup, setShowWelcomePopup] = useState(true);
     const [sortBy, setSortBy] = useState(initialSortBy);
     const [viewMode, setViewMode] = useState(initialViewMode);
+
+
+
 
     const fetchProducts = async () => {
         setIsLoading(true);
@@ -40,8 +44,13 @@ export const AppProvider = ({ children }) => {
         if (visited) {
             setShowWelcomePopup(false);
         }
-
+        const savedWishlist = localStorage.getItem('wishlist');
+        if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    }, [wishlist]);
 
     const addToCart = (product) => {
         setCart(prevCart => {
@@ -78,6 +87,36 @@ export const AppProvider = ({ children }) => {
         setCart([]);
     };
 
+    const toggleWishlist = (product) => {
+        setWishlist(prev => {
+            const exists = prev.find(item => item.slug === product.slug);
+            if (exists) {
+                return prev.filter(item => item.slug !== product.slug);
+            } else {
+                return [...prev, product];
+            }
+        });
+    };
+
+    const isInWishlist = (product) => {
+        if (!product) return false; // protezione se product è null/undefined
+        return wishlist.some(item => item.slug === product.slug);
+    };
+
+    const addToWishlist = (product) => {
+        setWishlist(prev => {
+            if (!prev.find(item => item.slug === product.slug)) {
+                return [...prev, product];
+            }
+            return prev; // se già presente, non aggiunge
+        });
+    };
+
+    const removeFromWishlist = (productSlug) => {
+        setWishlist(prev => prev.filter(item => item.slug !== productSlug));
+    };
+
+
     const value = {
         products,
         setProducts,
@@ -93,6 +132,11 @@ export const AppProvider = ({ children }) => {
         setSortBy,
         setViewMode,
         hideWelcomePopup: () => setShowWelcomePopup(false),
+        wishlist,
+        toggleWishlist,
+        isInWishlist,  
+        addToWishlist,     
+        removeFromWishlist
     };
 
     return (

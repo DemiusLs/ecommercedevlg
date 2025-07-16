@@ -2,17 +2,33 @@ import React, { useState, useEffect, use } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+
 
 const ProductDetail = () => {
 
   const { slug } = useParams();
-  const { addToCart, products, cart } = useAppContext()
+  const { addToCart, products, cart, wishlist, addToWishlist, removeFromWishlist } = useAppContext()
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  
+
+  const isWishlisted = product && wishlist.some(item => item.slug === product.slug);
+
+
+  const toggleWishlist = () => {
+  if (!product) return;  // evita errori se product non è ancora caricato
+
+  if (isWishlisted) {
+    removeFromWishlist(product.slug);
+  } else {
+    addToWishlist(product);
+  }
+};
 
 
   useEffect(() => {
@@ -136,7 +152,16 @@ const ProductDetail = () => {
               <span className={styles.category}>{product.category}</span>
             </div>
 
-            <h1 className={styles.productName}>{product.name}</h1>
+            <h1 className={styles.productName}>{product.name}
+              <button className={styles.wishlistButton} onClick={toggleWishlist}>
+                {isWishlisted ? (
+                  <FaHeart className={styles.heartIconFilled} />
+                ) : (
+                  <FaRegHeart className={styles.heartIconEmpty} />
+                )}
+              </button>
+
+            </h1>
             <p className={styles.productDescription}>{product.description}</p>
 
             <div className={styles.priceContainer}>

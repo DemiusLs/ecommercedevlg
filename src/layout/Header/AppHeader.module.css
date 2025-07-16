@@ -171,6 +171,18 @@
   transform: scale(1.05);
 }
 
+.wishlistButton {
+  font-size: 1.6rem;
+  margin: 0 10px;
+  text-decoration: none;
+  color: #444;
+  transition: color 0.3s ease;
+}
+
+.wishlistButton:hover {
+  color: red;
+}
+
 
 @media (max-width: 768px) {
   .container {

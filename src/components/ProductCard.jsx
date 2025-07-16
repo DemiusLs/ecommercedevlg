@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductCard.module.css';
 
-const ProductCard = ({ product }) => {
-  const { addToCart, cart } = useAppContext();
+const ProductCard = ({ product, showWishlistButton = true }) => {
+  const { addToCart, cart, wishlist = [], toggleWishlist } = useAppContext();
+
 
 
 
@@ -37,13 +38,6 @@ const ProductCard = ({ product }) => {
     });
 
 
-
-    // } else {
-    //   console.log("non aggiungibile")
-    // }
-
-
-
   };
 
   const formatPrice = (price) => {
@@ -53,9 +47,25 @@ const ProductCard = ({ product }) => {
     }).format(price);
   };
 
+  const isInWishlist = wishlist.some(item => item.id === product.id);
+
+
   return (
     <Link to={`/product/${product.slug}`} className={styles.card}>
       <div className={styles.imageContainer}>
+        {showWishlistButton && (
+          <button
+            className={styles.wishlistIcon}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
+          >
+            {wishlist.some(item => item.slug === product.slug) ? '❤️' : '🤍'}
+          </button>
+        )}
+
         <img
           src={product.img_url}
           alt={product.name}
@@ -63,13 +73,19 @@ const ProductCard = ({ product }) => {
           loading="lazy"
         />
 
-
         {product.status === 1 && <span className={styles.badge}>Nuovo</span>}
-        {product.discount && <span className={`${styles.badge} ${styles.saleBadge}`}>Offerta {product.discount}%</span>}
-        {product.stock === 0 && <span className={`${styles.badge} ${styles.outOfStockBadge}`}>Esaurito</span>}
-
-        
+        {product.discount && (
+          <span className={`${styles.badge} ${styles.saleBadge}`}>
+            Offerta {product.discount}%
+          </span>
+        )}
+        {product.stock === 0 && (
+          <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
+            Esaurito
+          </span>
+        )}
       </div>
+
 
       <div className={styles.content}>
         <h3 className={styles.name}>{product.name}</h3>
@@ -93,12 +109,14 @@ const ProductCard = ({ product }) => {
             <span className={styles.outOfStock}>Non disponibile</span>
           )}
           <button
-          className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
-          onClick={handleAddToCart}
-          disabled={product.stock === 0}
-        >
-          {product.stock === 0 ? 'Esaurito' : '🛒'}
-        </button>
+            className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
+            onClick={handleAddToCart}
+            disabled={product.stock === 0}
+          >
+            {product.stock === 0 ? 'Esaurito' : '🛒'}
+          </button>
+
+
 
         </div>
       </div>

@@ -115,6 +115,23 @@
   margin-bottom: 0.75rem;
 }
 
+.wishlistIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.5rem;
+  z-index: 2;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.3s;
+  user-select: none;
+}
+
+.wishlistIcon:hover {
+  transform: scale(1.1);
+  color: red;
+}
+
+
 .price {
   font-size: 1.2rem;
   font-weight: 700;

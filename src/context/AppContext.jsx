@@ -18,10 +18,11 @@ export const AppProvider = ({ children }) => {
     const [showWelcomePopup, setShowWelcomePopup] = useState(true);
     const [sortBy, setSortBy] = useState(initialSortBy);
     const [viewMode, setViewMode] = useState(initialViewMode);
+    const [compareList, setCompareList] = useState([]);
 
 
 
-
+    //chiamata axios per prendere le stampe
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
@@ -37,7 +38,7 @@ export const AppProvider = ({ children }) => {
             setIsLoading(false);
         }
     };
-
+    //useeffect per settare il local storage
     useEffect(() => {
         fetchProducts();
         const visited = localStorage.getItem('boolshop_visited');
@@ -47,11 +48,11 @@ export const AppProvider = ({ children }) => {
         const savedWishlist = localStorage.getItem('wishlist');
         if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
     }, []);
-
+    //useeffect all'attivazione del cambio dello stato della wishlist
     useEffect(() => {
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
     }, [wishlist]);
-
+    //funzione di aggiunta al carrello
     const addToCart = (product) => {
         setCart(prevCart => {
             const existing = prevCart.find(item => item.slug === product.slug);
@@ -78,15 +79,15 @@ export const AppProvider = ({ children }) => {
             return [...prevCart, product];
         });
     };
-
+    //funzione di rimozione dal carrello
     const removeFromCart = (productSlug) => {
         setCart(prevCart => prevCart.filter(item => item.slug !== productSlug));
     };
-
+    //funzione di cancellazione carrello
     const clearCart = () => {
         setCart([]);
     };
-
+    //funzione di cambio stato del cuoricino wishlist
     const toggleWishlist = (product) => {
         setWishlist(prev => {
             const exists = prev.find(item => item.slug === product.slug);
@@ -97,12 +98,12 @@ export const AppProvider = ({ children }) => {
             }
         });
     };
-
+    //funzione di controllo se prodotto già interno alla wishlist
     const isInWishlist = (product) => {
         if (!product) return false; // protezione se product è null/undefined
         return wishlist.some(item => item.slug === product.slug);
     };
-
+    //funzione di aggiunta alla wishlist
     const addToWishlist = (product) => {
         setWishlist(prev => {
             if (!prev.find(item => item.slug === product.slug)) {
@@ -111,12 +112,24 @@ export const AppProvider = ({ children }) => {
             return prev; // se già presente, non aggiunge
         });
     };
-
+    //funzione di rimozione della wishlist
     const removeFromWishlist = (productSlug) => {
         setWishlist(prev => prev.filter(item => item.slug !== productSlug));
     };
+    //funzioni per il confronto prodotti, fatte solamente per esercizio ma non per funzionalità poichè non possiamo confrontare due prodotti d'arte
+    // aggiungi prodotto a confronto
+    const addToCompare = (product) => {
+        setCompareList((prev) => {
+            if (prev.find(p => p.slug === product.slug)) return prev; // già presente
+            if (prev.length >= 3) return prev; // massimo 3
+            return [...prev, product];
+        });
+    };
 
-
+    // rimuovi prodotto da confronto
+    const removeFromCompare = (slug) => {
+        setCompareList((prev) => prev.filter(p => p.slug !== slug));
+    };
     const value = {
         products,
         setProducts,
@@ -134,9 +147,11 @@ export const AppProvider = ({ children }) => {
         hideWelcomePopup: () => setShowWelcomePopup(false),
         wishlist,
         toggleWishlist,
-        isInWishlist,  
-        addToWishlist,     
-        removeFromWishlist
+        isInWishlist,
+        addToWishlist,
+        removeFromWishlist,
+        addToCompare,
+        removeFromCompare
     };
 
     return (

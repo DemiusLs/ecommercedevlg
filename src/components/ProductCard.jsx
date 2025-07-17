@@ -3,11 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductCard.module.css';
 
-const ProductCard = ({ product, showWishlistButton = true }) => {
+const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) => {
   const { addToCart, cart, wishlist = [], toggleWishlist } = useAppContext();
-
-
-
 
 
   const handleAddToCart = (e) => {
@@ -51,7 +48,7 @@ const ProductCard = ({ product, showWishlistButton = true }) => {
 
 
   return (
-    <Link to={`/product/${product.slug}`} className={styles.card}>
+    <Link to={`/product/${product.slug}`} className={`${styles.card} ${viewMode === 'list' ? styles.cardList : ''}`}>
       <div className={styles.imageContainer}>
         {showWishlistButton && (
           <button
@@ -99,15 +96,18 @@ const ProductCard = ({ product, showWishlistButton = true }) => {
             </span>
           )}
         </div>
+        <div className={styles.priceContainer}>
+          <span className={styles.name}>{product.description}</span>         
+        </div>
 
         <div className={styles.stock}>
-          {product.stock > 0 ? (
-            <span className={styles.inStock}>
-              {product.stock < 5 ? `Solo ${product.stock} rimasti` : 'Disponibile'}
-            </span>
-          ) : (
-            <span className={styles.outOfStock}>Non disponibile</span>
-          )}
+          <span className={product.stock > 0 ? styles.inStock : styles.outOfStock}>
+            {product.stock > 0
+              ? product.stock < 5
+                ? `Solo ${product.stock} rimasti`
+                : 'Disponibile'
+              : 'Non disponibile'}
+          </span>
           <button
             className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
             onClick={handleAddToCart}
@@ -115,10 +115,8 @@ const ProductCard = ({ product, showWishlistButton = true }) => {
           >
             {product.stock === 0 ? 'Esaurito' : '🛒'}
           </button>
-
-
-
         </div>
+
       </div>
     </Link>
   );

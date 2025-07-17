@@ -184,7 +184,8 @@
 }
 
 
-@media (max-width: 768px) {
+/* 🟢 1. Burger menu attivo fino a 1023px */
+@media (max-width: 1023px) {
   .container {
     height: 70px;
     padding: 0 15px;
@@ -222,22 +223,14 @@
   .menuToggle {
     display: flex;
   }
-}
 
-@media (max-width: 480px) {
-  .logoText {
-    font-size: 1.25rem;
+  /* 🔴 Nascondi la nav desktop */
+  .nav {
+    display: none;
   }
 
-  .logoSubtext {
-    font-size: 0.7rem;
-  }
-
-  .searchForm {
-    width: 120px;
-  }
-
-  .searchInput {
-    width: 80px;
+  .navOpen {
+    display: flex;
   }
 }
+

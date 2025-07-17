@@ -6,13 +6,13 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FaBalanceScale } from 'react-icons/fa';
 import ProductCarousel from '../components/ProductCarousel';
 import fetchFilteredPrints from '../services/filterPrints.js';
+import axios from 'axios';
 
 
 const ProductDetail = () => {
 
   const { slug } = useParams();
   const { addToCart,
-    products,
     cart,
     wishlist,
     addToWishlist,
@@ -20,6 +20,7 @@ const ProductDetail = () => {
     compareList,
     addToCompare,
     removeFromCompare } = useAppContext()
+    
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -60,22 +61,32 @@ const ProductDetail = () => {
   };
 
   useEffect(() => {
-    if (!products || products.length === 0) return;
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/prints/${slug}`);
+        setProduct(res.data);
+      } catch (err) {
+        console.error('Errore nel recupero del prodotto:', err);
+        setProduct(null); // forza la schermata "Prodotto non trovato"
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const foundProduct = products.find(p => p.slug === slug);
-    if (foundProduct) {
-      setProduct(foundProduct);
-    }
-    setIsLoading(false);
-  }, [slug, products]);
+    fetchProduct();
+  }, [slug]);
 
   useEffect(() => {
     const loadRelatedProducts = async () => {
-      if (!product?.id_genre) return;
+      if (!product?.genre_name) return;
 
       try {
-        const results = await fetchFilteredPrints({ id_genre: product.id_genre });
-        const filtered = results.filter(p => p.slug !== product.slug); // escludi quello corrente
+        const { data } = await fetchFilteredPrints({
+          genre: product.genre_name,
+          // limit: 8
+        });
+
+        const filtered = data.filter(p => p.slug !== product.slug);
         setRelatedProducts(filtered);
       } catch (err) {
         console.error('Errore nel caricamento dei prodotti correlati:', err);

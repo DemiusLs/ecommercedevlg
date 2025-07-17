@@ -150,40 +150,52 @@ tbody tr:last-child td {
 
 
 /* Responsive */
-@media (max-width: 600px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  thead tr {
-    display: none;
-  }
-
-  tbody tr {
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    background-color: var(--bg-color);
-  }
-
-  tbody td {
-    border: none;
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-  }
-
-  tbody td:first-child {
-    font-weight: 600;
-    color: var(--primary-color);
-  }
-
-  .productHeader {
-    padding-top: 0;
+  @media (max-width: 1200px) {
+  .productImage {
+    width: 80px;
+    height: auto;
   }
 
   .productName {
-    max-width: 80%;
+    max-width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .removeButton {
+    opacity: 1 !important;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    font-size: 1rem;
+    padding: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 10;
+    top: 2px;
+    right: 2px;
+  }
+
+  .imageContainer {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .imageContainer:hover .removeButton {
+    opacity: 1;
+  }
+
+  th,
+  td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
   }
 }

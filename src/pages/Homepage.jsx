@@ -20,12 +20,15 @@ const Homepage = () => {
       try {
         const [newData, saleData, featuredData] = await Promise.all([
           fetchFilteredPrints({ filter: "new" }),
-          fetchFilteredPrints({ filter: "sale" }),
+          fetchFilteredPrints({ filter: "sale" , limit: 10}),
           // fetchFilteredPrints({ filter: "featured" }),
         ]);
 
-        setNewProducts(newData);
-        setSaleProducts(saleData);
+        console.log("NEW", newData.data);
+        console.log("SALE", saleData.data);
+
+        setNewProducts(newData.data);
+        setSaleProducts(saleData.data);
         // setFeaturedProducts(featuredData);
       } catch (err) {
         console.error("Errore nel caricamento dei caroselli:", err);
@@ -102,13 +105,13 @@ const Homepage = () => {
       </section>
 
       {/* Carousels */}
-      <section className={styles.carousel}>
+      <section className={styles.carousel} >
         <div className={styles.container}>
           {newProducts.length > 0 && (
             <ProductCarousel
               title="Nuovi Arrivi"
               products={newProducts}
-              viewAllLink="/gallery?filter_new"
+              viewAllLink="/gallery?filter=new"
             />
           )}
 

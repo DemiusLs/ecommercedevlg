@@ -58,7 +58,8 @@ const ProductFilter = () => {
           className={styles.sortSelect}
         >
           <option value="newest">Più recenti</option>
-          <option value="name">Nome A-Z</option>
+          <option value="a-z">Alfabetico cres</option>
+          <option value="z-a">Alfabetico dec</option>
           <option value="price-asc">Prezzo crescente</option>
           <option value="price-desc">Prezzo decrescente</option>
         </select>

@@ -58,9 +58,9 @@
 
 .addToCartButton {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
+  bottom: 27px;
+  left: 290px;
+  /*right: 12px; */
   background: rgba(26, 26, 26, 0.9);
   color: white;
   border: none;
@@ -72,7 +72,20 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.3s ease;
+  
+  
 }
+
+.card:not(.cardList) {
+  min-height: 360px; /* o un valore adatto in base ai tuoi contenuti */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card:not(.cardList) .content {
+  padding-bottom: 2.5rem;
+}
+
 
 .card:hover .addToCartButton {
   opacity: 1;
@@ -90,6 +103,7 @@
 
 .content {
   padding: 1.25rem;
+  padding-bottom: 2.5rem;
 }
 
 .name {

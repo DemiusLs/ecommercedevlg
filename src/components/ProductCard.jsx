@@ -96,6 +96,9 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
             </span>
           )}
         </div>
+        <div className={styles.priceContainer}>
+          <span className={styles.name}>{product.description}</span>         
+        </div>
 
         <div className={styles.stock}>
           <span className={product.stock > 0 ? styles.inStock : styles.outOfStock}>

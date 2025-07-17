@@ -88,7 +88,7 @@ const Gallery = () => {
         <div className={styles.content}>
           <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView}`}>
             {pagedProducts.map((product) => (
-       <ProductCard key={product.id} product={product} />
+       <ProductCard key={product.id} product={product} viewMode={viewMode} />
               
             ))}
           </div>

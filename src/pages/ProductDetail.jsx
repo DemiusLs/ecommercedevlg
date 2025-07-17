@@ -2,21 +2,62 @@ import React, { useState, useEffect, use } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaBalanceScale } from 'react-icons/fa';
 import ProductCarousel from '../components/ProductCarousel';
 import fetchFilteredPrints from '../services/filterPrints.js';
+
 
 const ProductDetail = () => {
 
   const { slug } = useParams();
-  const { addToCart, products, cart } = useAppContext()
+  const { addToCart,
+    products,
+    cart,
+    wishlist,
+    addToWishlist,
+    removeFromWishlist,
+    compareList,
+    addToCompare,
+    removeFromCompare } = useAppContext()
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [compareAlert, setCompareAlert] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
 
+  const isWishlisted = product && wishlist.some(item => item.slug === product.slug);
+  const isInCompareList = product && compareList?.some(item => item.slug === product.slug);
+
+  //logo per aggiunta o rimozione dalla wishlist
+  const toggleWishlist = () => {
+    if (!product) return;  // evita errori se product non è ancora caricato
+
+    if (isWishlisted) {
+      removeFromWishlist(product.slug);
+    } else {
+      addToWishlist(product);
+    }
+  };
+  // logo per inserire in comparazione prodotto
+  const handleCompare = () => {
+    if (!product) return;
+
+    if (isInCompareList) {
+      removeFromCompare(product.slug);
+    } else {
+      if (compareList?.length >= 3) {
+        alert("Puoi confrontare al massimo 3 prodotti.");
+        return;
+      }
+      addToCompare(product);
+      setCompareAlert(true);
+      setTimeout(() => setCompareAlert(false), 2000); // alert visibile per 2s
+    }
+  };
 
   useEffect(() => {
     if (!products || products.length === 0) return;
@@ -118,6 +159,11 @@ const ProductDetail = () => {
 
   return (
     <div className={styles.productDetail}>
+      {compareAlert && (
+        <div className={styles.compareAlert}>
+          Prodotto aggiunto alla comparazione!
+        </div>
+      )}
       <div className={styles.container}>
         <button onClick={() => navigate(-1)} className={styles.backLink}>
           ← Indietro
@@ -155,7 +201,23 @@ const ProductDetail = () => {
               <span className={styles.category}>{product.category}</span>
             </div>
 
-            <h1 className={styles.productName}>{product.name}</h1>
+            <h1 className={styles.productName}>{product.name}
+              <button className={styles.wishlistButton} onClick={toggleWishlist}>
+                {isWishlisted ? (
+                  <FaHeart className={styles.heartIconFilled} />
+                ) : (
+                  <FaRegHeart className={styles.heartIconEmpty} />
+                )}
+              </button>
+              <button
+                className={styles.compareButton}
+                onClick={handleCompare}
+                title="Confronta"
+              >
+                <FaBalanceScale />
+              </button>
+
+            </h1>
             <p className={styles.productDescription}>{product.description}</p>
 
             <div className={styles.priceContainer}>

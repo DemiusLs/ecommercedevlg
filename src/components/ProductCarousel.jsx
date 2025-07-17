@@ -5,7 +5,7 @@ import ProductCard from './ProductCard';
 import styles from './ProductCarousel.module.css';
 
 const ProductCarousel = ({ title, products, viewAllLink }) => {
-
+  
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerView = 4;
@@ -46,8 +46,8 @@ const ProductCarousel = ({ title, products, viewAllLink }) => {
               transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`
             }}
           >
-            {products.map((product) => (
-              <div key={product.id} className={styles.carouselItem}>
+            {products.map((product, index) => (
+              <div key={index} className={styles.carouselItem}>
                 <ProductCard product={product} />
               </div>
             ))}

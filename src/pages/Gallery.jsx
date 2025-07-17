@@ -1,17 +1,17 @@
- import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import styles from './Gallery.module.css';
-
+import fetchFilteredPrints from '../services/filterPrints';
 const Gallery = () => {
   const { viewMode, sortBy, products: productsFromContext = [] } = useAppContext();
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [pagedProducts, setPagedProducts] = useState([])
-  const totalPages = Math.ceil(productsFromContext.length / limit)
+  const [totalPages, setTotalPages] = useState(1);
 
   const [searchParams] = useSearchParams();
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -20,42 +20,23 @@ const Gallery = () => {
   const query = searchParams.get('q');
 
   useEffect(() => {
-    const start = (page - 1) * limit;
-    const end = start + limit;
-    setPagedProducts(productsFromContext.slice(start, end))
-    if (!Array.isArray(productsFromContext) || productsFromContext.length === 0) {
-      setFilteredProducts([]);
-      return;
-    }
-  // questo è per damiano
-    let products = [...productsFromContext];
+    const fetchData = async () => {
+      const result = await fetchFilteredPrints({
+        filter,
+        genre: null, // o da URL se presente
+        query,
+        sort: sortBy.replace('-', '_'), // 'price-asc' → 'price_asc'
+        page,
+        limit
+      });
 
-    // filtro per ricerca
-    if (query) {
-      products = products.filter(p =>
-      (p.name?.toLowerCase().includes(query.toLowerCase()) ||
-        p.category?.toLowerCase().includes(query.toLowerCase()))
-      );
-    }
+      setFilteredProducts(result.data || []);
+      setPagedProducts(result.data || []);
+      setTotalPages(result.totalPages || 1);
+    };
 
-    // sorting
-    switch (sortBy) {
-      case 'price-asc':
-        products.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-desc':
-        products.sort((a, b) => b.price - a.price);
-        break;
-      case 'name':
-        products.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default:
-        products.sort((a, b) => b.id - a.id);
-        break;
-    }
-
-    setFilteredProducts(products);
-  }, [filter, query, sortBy, productsFromContext, page, limit]);
+    fetchData();
+  }, [filter, query, sortBy, page, limit]);
 
   const getPageTitle = () => {
     if (query) return `Risultati per "${query}"`;
@@ -73,7 +54,7 @@ const Gallery = () => {
           <p className={styles.subtitle}>
             {filteredProducts.length} {filteredProducts.length === 1 ? 'prodotto' : 'prodotti'}
           </p>
-        </div> 
+        </div>
         <ProductFilters />
         <div className={styles.controls}>
           <label>Prodotti per pagina: </label>
@@ -83,13 +64,13 @@ const Gallery = () => {
             <option value={20}>20</option>
           </select>
         </div>
-       
+
 
         <div className={styles.content}>
           <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView}`}>
             {pagedProducts.map((product) => (
-       <ProductCard key={product.id} product={product} />
-              
+              <ProductCard key={product.id} product={product} />
+
             ))}
           </div>
 
@@ -102,7 +83,7 @@ const Gallery = () => {
               </p>
             </div>
           )}
-           {totalPages > 1 && (
+          {totalPages > 1 && (
             <div className={styles.pagination}>
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>⬅️</button>
               <span>Pagina {page} di {totalPages}</span>

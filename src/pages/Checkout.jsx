@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import axios from 'axios';
 import styles from './Checkout.module.css';
 
 const Checkout = () => {
@@ -64,7 +65,7 @@ const Checkout = () => {
 
   const applyCoupon = () => {
     setCouponError('');
-    const coupon = products.coupons.find(c => c.code === couponCode.toUpperCase());
+    const coupon = products.coupons?.find(c => c.code === couponCode.toUpperCase());
 
     if (!coupon) {
       setCouponError('Codice sconto non valido');
@@ -124,16 +125,31 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsSubmitting(true);
 
     try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, {
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        mail: formData.email,
+        phone_number: formData.phone,
+        total_price: getTotal(),
+        billing_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
+        shipping_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
+        order_status: 1,
+        prints: cart.map(item => ({
+          slug: item.slug,
+          quantity_req: item.quantity
+        }))
+      });
+
       clearCart();
       setDiscount(null);
 
       alert('Ordine confermato! Riceverai una email di conferma.');
       navigate('/');
-    } catch {
+
+    } catch (error) {
+      console.error(error);
       alert('Errore durante il checkout.');
     } finally {
       setIsSubmitting(false);
@@ -146,9 +162,10 @@ const Checkout = () => {
         <h1 className={styles.title}>Checkout</h1>
 
         <div className={styles.checkoutGrid}>
+
+          {/* FORM */}
           <div className={styles.checkoutForm}>
             <form onSubmit={handleSubmit}>
-
               {/* Sezione Contatto */}
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>Informazioni di contatto</h2>
@@ -342,7 +359,7 @@ const Checkout = () => {
             </form>
           </div>
 
-          {/* Riepilogo Ordine */}
+          {/* RIEPILOGO ORDINE */}
           <div className={styles.orderSummary}>
             <div className={styles.summaryCard}>
               <h3 className={styles.summaryTitle}>Riepilogo Ordine</h3>
@@ -360,7 +377,6 @@ const Checkout = () => {
                 ))}
               </div>
 
-              {/* Coupon */}
               <div className={styles.couponSection}>
                 <div className={styles.couponInput}>
                   <input
@@ -378,7 +394,6 @@ const Checkout = () => {
                     Applica
                   </button>
                 </div>
-         
 
                 {couponError && <div className={styles.error}>{couponError}</div>}
 
@@ -390,7 +405,6 @@ const Checkout = () => {
                 )}
               </div>
 
-              {/* Totali */}
               <div className={styles.summaryRows}>
                 <div className={styles.summaryRow}>
                   <span>Subtotale</span>

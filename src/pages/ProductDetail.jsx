@@ -4,7 +4,8 @@ import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FaBalanceScale } from 'react-icons/fa';
-
+import ProductCarousel from '../components/ProductCarousel';
+import fetchFilteredPrints from '../services/filterPrints.js';
 
 
 const ProductDetail = () => {
@@ -25,8 +26,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [compareAlert, setCompareAlert] = useState(false);
-
-
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
 
   const isWishlisted = product && wishlist.some(item => item.slug === product.slug);
@@ -68,6 +68,22 @@ const ProductDetail = () => {
     }
     setIsLoading(false);
   }, [slug, products]);
+
+  useEffect(() => {
+    const loadRelatedProducts = async () => {
+      if (!product?.id_genre) return;
+
+      try {
+        const results = await fetchFilteredPrints({ id_genre: product.id_genre });
+        const filtered = results.filter(p => p.slug !== product.slug); // escludi quello corrente
+        setRelatedProducts(filtered);
+      } catch (err) {
+        console.error('Errore nel caricamento dei prodotti correlati:', err);
+      }
+    };
+
+    loadRelatedProducts();
+  }, [product]);
 
   if (isLoading) {
     return <div className={styles.loading}>Caricamento...</div>;
@@ -270,7 +286,18 @@ const ProductDetail = () => {
               </ul>
             </div>
           </div>
+
+
+
         </div>
+
+        {relatedProducts.length > 0 && (
+          <ProductCarousel
+            title={`Altri in ${product.genre_name}`}
+            products={relatedProducts}
+            viewAllLink={`/gallery?genre=${encodeURIComponent(product.genre_name)}`}
+          />
+        )}
       </div>
     </div>
   );

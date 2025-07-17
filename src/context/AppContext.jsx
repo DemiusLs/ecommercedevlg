@@ -120,11 +120,19 @@ export const AppProvider = ({ children }) => {
     // aggiungi prodotto a confronto
     const addToCompare = (product) => {
         setCompareList((prev) => {
-            if (prev.find(p => p.slug === product.slug)) return prev; // già presente
-            if (prev.length >= 3) return prev; // massimo 3
+            if (prev.find(p => p.slug === product.slug)) {
+                alert(`"${product.name}" è già presente nella lista di confronto.`);
+                return prev;
+            }
+            if (prev.length >= 3) {
+                alert("Puoi confrontare al massimo 3 prodotti.");
+                return prev;
+            }
+            alert(`"${product.name}" aggiunto alla lista di confronto.`);
             return [...prev, product];
         });
     };
+
 
     // rimuovi prodotto da confronto
     const removeFromCompare = (slug) => {

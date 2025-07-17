@@ -24,6 +24,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [compareAlert, setCompareAlert] = useState(false);
+
 
 
 
@@ -47,11 +49,13 @@ const ProductDetail = () => {
     if (isInCompareList) {
       removeFromCompare(product.slug);
     } else {
-      if (compareList.length >= 3) {
+      if (compareList?.length >= 3) {
         alert("Puoi confrontare al massimo 3 prodotti.");
         return;
       }
       addToCompare(product);
+      setCompareAlert(true);
+      setTimeout(() => setCompareAlert(false), 2000); // alert visibile per 2s
     }
   };
 
@@ -139,6 +143,11 @@ const ProductDetail = () => {
 
   return (
     <div className={styles.productDetail}>
+      {compareAlert && (
+        <div className={styles.compareAlert}>
+          Prodotto aggiunto alla comparazione!
+        </div>
+      )}
       <div className={styles.container}>
         <button onClick={() => navigate(-1)} className={styles.backLink}>
           ← Indietro
@@ -186,7 +195,7 @@ const ProductDetail = () => {
               </button>
               <button
                 className={styles.compareButton}
-                onClick={() => handleCompare(product)}
+                onClick={handleCompare}
                 title="Confronta"
               >
                 <FaBalanceScale />

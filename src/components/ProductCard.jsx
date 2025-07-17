@@ -7,9 +7,6 @@ const ProductCard = ({ product, showWishlistButton = true }) => {
   const { addToCart, cart, wishlist = [], toggleWishlist } = useAppContext();
 
 
-
-
-
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();

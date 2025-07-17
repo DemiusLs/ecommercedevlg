@@ -2,6 +2,8 @@ import React, { useState, useEffect, use } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
+import ProductCarousel from '../components/ProductCarousel';
+import fetchFilteredPrints from '../services/filterPrints.js';
 
 const ProductDetail = () => {
 
@@ -12,6 +14,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
 
 
@@ -24,6 +27,22 @@ const ProductDetail = () => {
     }
     setIsLoading(false);
   }, [slug, products]);
+
+  useEffect(() => {
+    const loadRelatedProducts = async () => {
+      if (!product?.id_genre) return;
+
+      try {
+        const results = await fetchFilteredPrints({ id_genre: product.id_genre });
+        const filtered = results.filter(p => p.slug !== product.slug); // escludi quello corrente
+        setRelatedProducts(filtered);
+      } catch (err) {
+        console.error('Errore nel caricamento dei prodotti correlati:', err);
+      }
+    };
+
+    loadRelatedProducts();
+  }, [product]);
 
   if (isLoading) {
     return <div className={styles.loading}>Caricamento...</div>;
@@ -205,7 +224,18 @@ const ProductDetail = () => {
               </ul>
             </div>
           </div>
+
+
+
         </div>
+
+        {relatedProducts.length > 0 && (
+          <ProductCarousel
+            title={`Altri in ${product.genre_name}`}
+            products={relatedProducts}
+            viewAllLink={`/gallery?genre=${encodeURIComponent(product.genre_name)}`}
+          />
+        )}
       </div>
     </div>
   );

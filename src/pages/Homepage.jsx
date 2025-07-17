@@ -4,12 +4,36 @@ import { useAppContext } from "../context/AppContext";
 import WelcomePopup from "../components/WelcomePopup"
 import ProductCarousel from "../components/ProductCarousel"
 import styles from './Homepage.module.css';
+import fetchFilteredPrints from '../services/filterPrints';
 
 
 
 const Homepage = () => {
-  const { dispatch, shoWelcomePopup, products } = useAppContext();
+  const { products } = useAppContext();
   const [heroSlide, setHeroSlide] = useState(0)
+  const [newProducts, setNewProducts] = useState([]);
+  const [saleProducts, setSaleProducts] = useState([]);
+  // const [featuredProducts, setFeaturedProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchCarousels = async () => {
+      try {
+        const [newData, saleData, featuredData] = await Promise.all([
+          fetchFilteredPrints({ filter: "new" }),
+          fetchFilteredPrints({ filter: "sale" }),
+          // fetchFilteredPrints({ filter: "featured" }),
+        ]);
+
+        setNewProducts(newData);
+        setSaleProducts(saleData);
+        // setFeaturedProducts(featuredData);
+      } catch (err) {
+        console.error("Errore nel caricamento dei caroselli:", err);
+      }
+    };
+
+    fetchCarousels();
+  }, []);
 
 
   const heroSlides = [
@@ -30,11 +54,9 @@ const Homepage = () => {
     }
   ];
 
-  
 
-  const newProducts = products.filter(p => p.isNew);
-  const saleProducts = products.filter(p => p.onSale);
-  const featuredProducts = products.filter(p => p.isFeatured);
+
+
 
   return (
     <div className={styles.homepage}>
@@ -98,13 +120,13 @@ const Homepage = () => {
             />
           )}
 
-          {featuredProducts.length > 0 && (
+          {/* {featuredProducts.length > 0 && (
             <ProductCarousel
               title="Scelti per Te"
               products={featuredProducts}
               viewAllLink="/gallery?filter=featured"
             />
-          )}
+          )} */}
         </div>
       </section>
 

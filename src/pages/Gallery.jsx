@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
@@ -9,6 +8,10 @@ import styles from './Gallery.module.css';
 const Gallery = () => {
   const { viewMode, sortBy, products: productsFromContext = [] } = useAppContext();
 
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [pagedProducts, setPagedProducts] = useState([])
+  const totalPages = Math.ceil(productsFromContext.length / limit)
 
   const [searchParams] = useSearchParams();
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -17,32 +20,25 @@ const Gallery = () => {
   const query = searchParams.get('q');
 
   useEffect(() => {
-    if (!Array.isArray(productsFromContext)) return;
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    setPagedProducts(productsFromContext.slice(start, end))
+    if (!Array.isArray(productsFromContext) || productsFromContext.length === 0) {
+      setFilteredProducts([]);
+      return;
+    }
 
     let products = [...productsFromContext];
 
-
-    // // Apply filters
-    // if (filter === 'new') {
-    //   products = products.filter(p => p.isNew);
-    // } else if (filter === 'sale') {
-    //   products = products.filter(p => p.onSale);
-    // } else if (filter === 'featured') {
-    //   products = products.filter(p => p.isFeatured);
-    // }
-
-    // Apply search
+    // filtro per ricerca
     if (query) {
-      products = products.filter(p => {
-        const nameMatch = p.name && p.name.toLowerCase().includes(query.toLowerCase());
-        const categoryMatch = p.category && p.category.toLowerCase().includes(query.toLowerCase());
-        return nameMatch || categoryMatch;
-      });
-
-
+      products = products.filter(p =>
+      (p.name?.toLowerCase().includes(query.toLowerCase()) ||
+        p.category?.toLowerCase().includes(query.toLowerCase()))
+      );
     }
 
-    // Apply sorting
+    // sorting
     switch (sortBy) {
       case 'price-asc':
         products.sort((a, b) => a.price - b.price);
@@ -53,14 +49,13 @@ const Gallery = () => {
       case 'name':
         products.sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case 'newest':
       default:
         products.sort((a, b) => b.id - a.id);
         break;
     }
 
     setFilteredProducts(products);
-  }, [filter, query, sortBy, productsFromContext]);
+  }, [filter, query, sortBy, productsFromContext, page, limit]);
 
   const getPageTitle = () => {
     if (query) return `Risultati per "${query}"`;
@@ -78,25 +73,40 @@ const Gallery = () => {
           <p className={styles.subtitle}>
             {filteredProducts.length} {filteredProducts.length === 1 ? 'prodotto' : 'prodotti'}
           </p>
-        </div>
-
+        </div> 
         <ProductFilters />
+        <div className={styles.controls}>
+          <label>Prodotti per pagina: </label>
+          <select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1) }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+          </select>
+        </div>
+       
 
         <div className={styles.content}>
-          <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView
-            }`}>
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView}`}>
+            {pagedProducts.map((product) => (
+       <ProductCard key={product.id} product={product} />
+              
             ))}
           </div>
 
-          {filteredProducts.length === 0 && (
+          {pagedProducts.length === 0 && (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>🎨</div>
               <h3 className={styles.emptyTitle}>Nessun prodotto trovato</h3>
               <p className={styles.emptyDescription}>
                 Prova a modificare i filtri di ricerca o esplora la nostra collezione completa.
               </p>
+            </div>
+          )}
+           {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>⬅️</button>
+              <span>Pagina {page} di {totalPages}</span>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>➡️</button>
             </div>
           )}
         </div>
@@ -106,4 +116,3 @@ const Gallery = () => {
 };
 
 export default Gallery;
-

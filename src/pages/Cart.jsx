@@ -6,31 +6,43 @@ const Cart = () => {
   const { cart, removeFromCart, setCart } = useAppContext();
 
   const updateQuantity = (slug, newQuantity) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.slug === slug) {
-          return {
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.slug === slug
+          ? {
             ...item,
-            quantity: newQuantity > item.maxStock ? item.maxStock : newQuantity < 1 ? 1 : newQuantity
-          };
-        }
-        return item;
-      });
-    });
+            quantity:
+              newQuantity > item.maxStock
+                ? item.maxStock
+                : newQuantity < 1
+                  ? 1
+                  : newQuantity,
+          }
+          : item
+      )
+    );
   };
 
-  const removeItem = (slug) => {
+  const removeItem = slug => {
     removeFromCart(slug);
   };
 
+  const getDiscountedPrice = (item) =>
+    item.discount > 0
+      ? item.price * (1 - item.discount / 100)
+      : item.price;
+
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => {
+      const discountedPrice = getDiscountedPrice(item);
+      return total + discountedPrice * item.quantity;
+    }, 0);
   };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('it-IT', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
     }).format(price);
   };
 
@@ -71,56 +83,72 @@ const Cart = () => {
 
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
-            {cart.map((item) => (
-              <div key={item.slug} className={styles.cartItem}>
-                <div className={styles.itemImage}>
-                  <img src={item.image} alt={item.name} />
-                </div>
+            {cart.map((item) => {
+              const discountedPrice = getDiscountedPrice(item);
+              const totalItemPrice = discountedPrice * item.quantity;
+              return (
+                <div key={item.slug} className={styles.cartItem}>
+                  <div className={styles.itemImage}>
+                    <img src={item.img_url} alt={item.name} />
+                  </div>
 
-                <div className={styles.itemInfo}>
-                  <h3 className={styles.itemName}>{item.name}</h3>
-                  <p className={styles.itemPrice}>{formatPrice(item.price)}</p>
+                  <div className={styles.itemInfo}>
+                    <h3 className={styles.itemName}>{item.name}</h3>
 
-                  {item.quantity > item.maxStock && (
-                    <div className={styles.stockWarning}>
-                      <span className={styles.warningText}>
-                        ⚠️ Solo {item.maxStock} disponibili
-                      </span>
+                    {item.discount > 0 ? (
+                      <div className={styles.priceGroup}>
+                        <span className={styles.originalPrice}>
+                          {formatPrice(item.price)}
+                        </span>
+                        <span className={styles.discountedPrice}>
+                          {formatPrice(discountedPrice)}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className={styles.itemPrice}>{formatPrice(item.price)}</p>
+                    )}
+
+                    {item.quantity > item.maxStock && (
+                      <div className={styles.stockWarning}>
+                        <span className={styles.warningText}>
+                          ⚠️ Solo {item.maxStock} disponibili
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.itemActions}>
+                    <div className={styles.quantityControls}>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item.slug, item.quantity - 1)}
+                      >
+                        −
+                      </button>
+                      <span className={styles.quantity}>{item.quantity}</span>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item.slug, item.quantity + 1)}
+                        disabled={item.quantity >= item.maxStock}
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                </div>
 
-                <div className={styles.itemActions}>
-                  <div className={styles.quantityControls}>
                     <button
-                      className={styles.quantityButton}
-                      onClick={() => updateQuantity(item.slug, item.quantity - 1)}
+                      className={styles.removeButton}
+                      onClick={() => removeItem(item.slug)}
                     >
-                      −
-                    </button>
-                    <span className={styles.quantity}>{item.quantity}</span>
-                    <button
-                      className={styles.quantityButton}
-                      onClick={() => updateQuantity(item.slug, item.quantity + 1)}
-                      disabled={item.quantity >= item.maxStock}
-                    >
-                      +
+                      Rimuovi
                     </button>
                   </div>
 
-                  <button
-                    className={styles.removeButton}
-                    onClick={() => removeItem(item.slug)}
-                  >
-                    Rimuovi
-                  </button>
+                  <div className={styles.itemTotal}>
+                    {formatPrice(totalItemPrice)}
+                  </div>
                 </div>
-
-                <div className={styles.itemTotal}>
-                  {formatPrice(item.price * item.quantity)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className={styles.cartSummary}>
@@ -146,7 +174,9 @@ const Cart = () => {
               <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                 <span>Totale</span>
                 <span>
-                  {formatPrice(totalPrice + (totalPrice >= freeShippingThreshold ? 0 : 5.99))}
+                  {formatPrice(
+                    totalPrice + (totalPrice >= freeShippingThreshold ? 0 : 5.99)
+                  )}
                 </span>
               </div>
 

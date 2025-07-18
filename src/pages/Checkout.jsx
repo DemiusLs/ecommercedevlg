@@ -12,7 +12,6 @@ const Checkout = () => {
   const [discount, setDiscount] = useState(null);
   const [couponError, setCouponError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -44,13 +43,20 @@ const Checkout = () => {
     );
   }
 
-  const getSubtotal = () => cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const getDiscountedPrice = (item) => {
+    return item.discount
+      ? item.price - (item.price * item.discount) / 100
+      : item.price;
+  };
+
+  const getSubtotal = () =>
+    cart.reduce((total, item) => total + getDiscountedPrice(item) * item.quantity, 0);
 
   const getDiscountAmount = () => {
     if (!discount) return 0;
     const subtotal = getSubtotal();
     return discount.type === 'percentage'
-      ? (subtotal * discount.discount / 100)
+      ? (subtotal * discount.discount) / 100
       : discount.discount;
   };
 
@@ -100,12 +106,13 @@ const Checkout = () => {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-
   const validateForm = () => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = 'Nome richiesto';
     if (!formData.lastName) newErrors.lastName = 'Cognome richiesto';
-    if (!formData.email) newErrors.email = 'Email richiesta';
+    if (!formData.email.trim() || !formData.email.includes('@') || !formData.email.includes('.')) {
+      newErrors.email = "Per favore, inserisci un'email valida.";
+    }
     if (!formData.phone) newErrors.phone = 'Telefono richiesto';
     if (!formData.address) newErrors.address = 'Indirizzo richiesto';
     if (!formData.city) newErrors.city = 'Città richiesta';
@@ -128,11 +135,10 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, {
         full_name: `${formData.firstName} ${formData.lastName}`,
         mail: formData.email,
         phone_number: formData.phone,
-        total_price: getTotal(),
         billing_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
         shipping_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
         order_status: 1,
@@ -142,15 +148,23 @@ const Checkout = () => {
         }))
       });
 
+      const { total_price, order_id } = response.data;
+
       clearCart();
       setDiscount(null);
 
-      alert('Ordine confermato! Riceverai una email di conferma.');
+      alert(`Ordine confermato! Prezzo totale: €${total_price}\nRiceverai una email di conferma.`);
+      console.log(`Ordine #${order_id} - Prezzo totale confermato backend: €${total_price}`);
+
       navigate('/');
 
     } catch (error) {
       console.error(error);
-      alert('Errore durante il checkout.');
+      if (error.response?.data?.error) {
+        alert(`Errore: ${error.response.data.error}`);
+      } else {
+        alert('Errore durante il checkout. Riprova più tardi.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -365,16 +379,28 @@ const Checkout = () => {
               <h3 className={styles.summaryTitle}>Riepilogo Ordine</h3>
 
               <div className={styles.orderItems}>
-                {cart.map(item => (
-                  <div key={item.id} className={styles.orderItem}>
-                    <img src={item.image} alt={item.name} className={styles.itemImage} />
-                    <div className={styles.itemDetails}>
-                      <span>{item.name}</span>
-                      <span>Qty: {item.quantity}</span>
+                {cart.map((item, index) => {
+                  const fullPrice = item.price * item.quantity;
+                  const discountedPrice = getDiscountedPrice(item) * item.quantity;
+
+                  return (
+                    <div key={index} className={styles.orderItem}>
+                      <img src={item.image} alt={item.name} className={styles.itemImage} />
+                      <div className={styles.itemDetails}>
+                        <span>{item.name}</span>
+                        <span>Qty: {item.quantity}</span>
+                      </div>
+                      {item.discount > 0 ? (
+                        <div className={styles.priceGroup}>
+                          <span className={styles.originalPrice}>{formatPrice(fullPrice)}</span>
+                          <span className={styles.discountedPrice}>{formatPrice(discountedPrice)}</span>
+                        </div>
+                      ) : (
+                        <span>{formatPrice(fullPrice)}</span>
+                      )}
                     </div>
-                    <span>{formatPrice(item.price * item.quantity)}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className={styles.couponSection}>

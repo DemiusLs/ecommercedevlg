@@ -1,4 +1,3 @@
-
 .checkout {
   padding: 2rem 0 4rem;
 }
@@ -376,4 +375,22 @@
   .couponInput {
     flex-direction: column;
   }
+}
+
+
+.priceGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  color: gray;
+  font-size: 0.9rem;
+}
+
+.discountedPrice {
+  color: #c00;
+  font-weight: bold;
 }

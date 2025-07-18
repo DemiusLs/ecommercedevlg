@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { FaTrash } from 'react-icons/fa';
 import styles from './compare.module.css';

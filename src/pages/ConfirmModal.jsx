@@ -25,3 +25,6 @@ const ConfirmModal = ({
         </Modal>
     )
 }
+
+
+export default ConfirmModal

@@ -5,8 +5,15 @@ import { useState } from 'react';
 import ConfirmModal from '../pages/ConfirmModal';
 
 const Cart = () => {
-  const { cart, removeFromCart, setCart } = useAppContext();
+  const { cart, clearCart, removeFromCart, setCart } = useAppContext();
 const [isModalOpen, setIsModalOpen] = useState(false)
+
+const handleClearCart = () => {
+  clearCart();
+  setIsModalOpen(false);
+};
+
+
   const updateQuantity = (slug, newQuantity) => {
     setCart(prevCart => {
       return prevCart.map(item => {
@@ -170,15 +177,10 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         </div>
       </div>
       <ConfirmModal
-      isOpen={isModalOpen}
-      onRequestClose={() => setIsModalOpen(false)}
-      onConfirm={() => {
-        clearCart();
-        setIsModalOpen(false)
-      }}
-      title="Sei sicuro di voler svuotare il carrello?"
-      confirmText="Si, svuota"
-      cancelText="No, annulla"
+     isOpen={isModalOpen}
+  onConfirm={handleClearCart}
+  onCancel={() => setIsModalOpen(false)}
+  message="Sei sicuro di voler svuotare il carrello?"
       />
     </div>
   );

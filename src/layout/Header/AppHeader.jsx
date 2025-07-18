@@ -16,7 +16,8 @@ const AppHeader = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${searchQuery.trim()}`);  //nella parte interna al navigate si inserisce la chaiamta api
+      // navigate(`/search?q=${searchQuery.trim()}`);  //nella parte interna al navigate si inserisce la chaiamta api
+      navigate(`/gallery?q=${searchQuery.trim()}`);
     }
   };
 

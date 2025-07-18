@@ -105,7 +105,11 @@ const Checkout = () => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = 'Nome richiesto';
     if (!formData.lastName) newErrors.lastName = 'Cognome richiesto';
-    if (!formData.email) newErrors.email = 'Email richiesta';
+    if (!formData.email) {
+      newErrors.email = 'Email richiesta'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Formato email non valido"
+    }
     if (!formData.phone) newErrors.phone = 'Telefono richiesto';
     if (!formData.address) newErrors.address = 'Indirizzo richiesto';
     if (!formData.city) newErrors.city = 'Città richiesta';
@@ -428,7 +432,6 @@ const Checkout = () => {
                   <span>{formatPrice(getTotal())}</span>
                 </div>
               </div>
-
             </div>
           </div>
 

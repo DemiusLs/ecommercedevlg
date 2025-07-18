@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './Cart.module.css';
+import { useState } from 'react';
+import ConfirmModal from '../pages/ConfirmModal';
 
 const Cart = () => {
-  const { cart, removeFromCart, setCart } = useAppContext();
+  const { cart, clearCart, removeFromCart, setCart } = useAppContext();
+const [isModalOpen, setIsModalOpen] = useState(false)
+
+const handleClearCart = () => {
+  clearCart();
+  setIsModalOpen(false);
+};
+
 
   const updateQuantity = (slug, newQuantity) => {
     setCart(prevCart => {
@@ -51,6 +60,9 @@ const Cart = () => {
             <Link to="/gallery" className={styles.shopButton}>
               Esplora la Galleria
             </Link>
+  <button onClick={() => setModalIsOpen(true)} className={styles.clearCartButton}>
+                Svuota Carrello
+              </button>
           </div>
         </div>
       </div>
@@ -157,10 +169,19 @@ const Cart = () => {
               <Link to="/gallery" className={styles.continueShoppingButton}>
                 Continua lo Shopping
               </Link>
+              <button className={styles.clearCartButton} onClick={() => setIsModalOpen(true)}>
+                Svuota Carrello
+              </button>
             </div>
           </div>
         </div>
       </div>
+      <ConfirmModal
+     isOpen={isModalOpen}
+  onConfirm={handleClearCart}
+  onCancel={() => setIsModalOpen(false)}
+  message="Sei sicuro di voler svuotare il carrello?"
+      />
     </div>
   );
 };

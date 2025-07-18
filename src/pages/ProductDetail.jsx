@@ -302,7 +302,7 @@ const ProductDetail = () => {
 
 
         </div>
-
+        <div className={styles.boxcarousel}>
         {relatedProducts.length > 0 && (
           <ProductCarousel
             title={`Altri in ${product.genre_name}`}
@@ -310,6 +310,7 @@ const ProductDetail = () => {
             viewAllLink={`/gallery?genre=${encodeURIComponent(product.genre_name)}`}
           />
         )}
+        </div>
       </div>
     </div>
   );

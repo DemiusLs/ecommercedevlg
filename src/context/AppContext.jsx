@@ -25,7 +25,6 @@ export const AppProvider = ({ children }) => {
     const [alertType, setAlertType] = useState('success');
 
 
-
     //chiamata axios per prendere le stampe
     const fetchProducts = async () => {
         setIsLoading(true);
@@ -135,6 +134,11 @@ export const AppProvider = ({ children }) => {
     const removeFromWishlist = (productSlug) => {
         setWishlist(prev => prev.filter(item => item.slug !== productSlug));
     };
+    //funzione di una completa rimozione della wishlist
+    const clearWishlist = () => {
+        setWishlist([]);
+        localStorage.removeItem('wishlist'); // opzionale: se la salvi su localStorage
+    };
     //funzioni per il confronto prodotti, fatte solamente per esercizio ma non per funzionalità poichè non possiamo confrontare due prodotti d'arte
     // aggiungi prodotto a confronto
     const addToCompare = (product) => {
@@ -158,7 +162,9 @@ export const AppProvider = ({ children }) => {
         setCompareList(prev => prev.filter(p => p.slug !== slug));
     };
 
-
+    const showPopup = (message, type = 'success') => {
+        setPopup({ message, type });
+    };
 
     const value = {
         products,
@@ -184,7 +190,9 @@ export const AppProvider = ({ children }) => {
         removeFromWishlist,
         compareList,
         addToCompare,
-        removeFromCompare
+        removeFromCompare,
+        clearWishlist,
+        showPopup,
     };
 
     return (

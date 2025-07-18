@@ -1,4 +1,4 @@
-import { useState, useEffect,} from 'react';
+import { useState, useEffect, } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
@@ -233,18 +233,22 @@ const ProductDetail = () => {
             <p className={styles.productDescription}>{product.description}</p>
 
             <div className={styles.priceContainer}>
-              <span className={styles.price}>{formatPrice(product.price - (product.price * product.discount / 100))}</span>
-              {product.originalPrice && (
-                <span className={styles.originalPrice}>
-                  {formatPrice(product.originalPrice)}
-                </span>
-              )}
-              {product.discount && (
-                <span className={styles.discount}>
-                  -{product.discount}%
-                </span>
+              <span className={styles.price}>
+                {formatPrice(product.price - (product.price * product.discount / 100))}
+              </span>
+
+              {product.discount > 0 && (
+                <>
+                  <span className={styles.originalPrice}>
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className={styles.discountBadge}>
+                    -{product.discount}%
+                  </span>
+                </>
               )}
             </div>
+
 
             <div className={styles.stockInfo}>
               {product.stock > 0 ? (

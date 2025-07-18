@@ -4,7 +4,6 @@ import ProductCard from '../components/ProductCard';
 import styles from './WishlistPage.module.css';
 import ConfirmModal from '../pages/ConfirmModal';
 
-
 const Wishlist = () => {
   const { wishlist, clearWishlist } = useAppContext();
 
@@ -14,14 +13,15 @@ const Wishlist = () => {
   const handleClear = () => {
     clearWishlist();
     setShowModal(false);
+    setIsModalOpen(false);
   };
 
   return (
     <div className={styles.wishlist}>
       <div className={styles.container}>
         <h1 className={styles.title}>La tua Wishlist</h1>
+
         <div className={styles.header}>
-          <h1 className={styles.title}>La tua Wishlist</h1>
           {wishlist.length > 0 && (
             <button className={styles.clearButton} onClick={() => setShowModal(true)}>
               Svuota Wishlist
@@ -42,21 +42,10 @@ const Wishlist = () => {
                 />
               ))}
             </div>
-
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className={styles.clearWishlistButton}
-            >
-              Svuota Wishlist
-            </button>
           </>
-          <div className={styles.grid}>
-            {wishlist.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
         )}
 
+        {/* Modale di conferma custom */}
         {showModal && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -74,12 +63,12 @@ const Wishlist = () => {
         )}
       </div>
 
-      {/* Modale di conferma */}
+      {/* Modale riutilizzabile, nel caso la si voglia mantenere */}
       <ConfirmModal
-       isOpen={isModalOpen}
-  onConfirm={handleClearCart}
-  onCancel={() => setIsModalOpen(false)}
-  message="Sei sicuro di voler svuotare il carrello?"
+        isOpen={isModalOpen}
+        onConfirm={handleClear}
+        onCancel={() => setIsModalOpen(false)}
+        message="Sei sicuro di voler svuotare la wishlist?"
       />
     </div>
   );

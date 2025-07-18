@@ -378,6 +378,7 @@
 }
 
 
+
 .priceGroup {
   display: flex;
   flex-direction: column;
@@ -394,3 +395,4 @@
   color: #c00;
   font-weight: bold;
 }
+

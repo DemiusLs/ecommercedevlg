@@ -120,13 +120,6 @@ const Homepage = () => {
             />
           )}
 
-          {/* {featuredProducts.length > 0 && (
-            <ProductCarousel
-              title="Scelti per Te"
-              products={featuredProducts}
-              viewAllLink="/gallery?filter=featured"
-            />
-          )} */}
         </div>
       </section>
 

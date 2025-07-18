@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
+import Alert from '../components/Alert';
 
 
 
@@ -19,7 +20,9 @@ export const AppProvider = ({ children }) => {
     const [sortBy, setSortBy] = useState(initialSortBy);
     const [viewMode, setViewMode] = useState(initialViewMode);
     const [compareList, setCompareList] = useState([]);
-
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('success');
 
 
     //chiamata axios per prendere le stampe
@@ -55,6 +58,15 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
     }, [wishlist]);
+
+    //funzione componente ALERT
+    const showAlert = (message, type = 'success') => {
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertVisible(true);
+    };
+
+
     //funzione di aggiunta al carrello
     const addToCart = (product) => {
         console.log(product)
@@ -65,11 +77,17 @@ export const AppProvider = ({ children }) => {
             const totalRequested = existingQuantity + product.quantity;
 
             if (totalRequested > product.stock) {
-                alert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`);
-                return prevCart;
+                if (totalRequested > product.stock) {
+                    showAlert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`, `error`);
+
+                    return prevCart;
+                }
+
             } else {
                 // Show success feedback
-                alert(`${product.name} aggiunto al carrello!`)
+
+                showAlert(`${product.name} aggiunto al carrello!`, 'success');
+
             }
 
             if (existing) {
@@ -124,19 +142,24 @@ export const AppProvider = ({ children }) => {
     const removeFromWishlist = (productSlug) => {
         setWishlist(prev => prev.filter(item => item.slug !== productSlug));
     };
+    //funzione di una completa rimozione della wishlist
+    const clearWishlist = () => {
+        setWishlist([]);
+        localStorage.removeItem('wishlist'); // opzionale: se la salvi su localStorage
+    };
     //funzioni per il confronto prodotti, fatte solamente per esercizio ma non per funzionalità poichè non possiamo confrontare due prodotti d'arte
     // aggiungi prodotto a confronto
     const addToCompare = (product) => {
         setCompareList((prev) => {
             if (prev.find(p => p.slug === product.slug)) {
-                alert(`"${product.name}" è già presente nella lista di confronto.`);
+                showAlert(`${product.name} è già presente nella lista di confronto.`, `error`);
                 return prev;
             }
             if (prev.length >= 3) {
-                alert("Puoi confrontare al massimo 3 prodotti.");
+                showAlert("Puoi confrontare al massimo 3 prodotti.", `error`);
                 return prev;
             }
-            alert(`"${product.name}" aggiunto alla lista di confronto.`);
+            showAlert(`${product.name} aggiunto alla lista di confronto.`);
             return [...prev, product];
         });
     };
@@ -147,7 +170,9 @@ export const AppProvider = ({ children }) => {
         setCompareList(prev => prev.filter(p => p.slug !== slug));
     };
 
-
+    const showPopup = (message, type = 'success') => {
+        setPopup({ message, type });
+    };
 
     const value = {
         products,
@@ -157,6 +182,7 @@ export const AppProvider = ({ children }) => {
         isLoading,
         error,
         showWelcomePopup,
+        showAlert,
         sortBy,
         viewMode,
         addToCart,
@@ -172,12 +198,25 @@ export const AppProvider = ({ children }) => {
         removeFromWishlist,
         compareList,
         addToCompare,
-        removeFromCompare
+        removeFromCompare,
+        clearWishlist,
+        showPopup,
     };
 
     return (
         <AppContext.Provider value={value}>
             {children}
+
+            {/* ALERT GLOBALE */}
+            <Alert
+                message={alertMessage}
+                visible={alertVisible}
+                type={alertType}
+                onClose={() => setAlertVisible(false)}
+            />
+
+
+
         </AppContext.Provider>
     );
 };

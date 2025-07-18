@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './Cart.module.css';
+import Modal from 'react-modal';
+import { useState } from 'react';
+
+Modal.setAppElement('#root');
 
 const Cart = () => {
-  const { cart, removeFromCart, setCart } = useAppContext();
+  const { cart, removeFromCart, setCart, clearCart } = useAppContext();
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const updateQuantity = (slug, newQuantity) => {
     setCart(prevCart => {
@@ -21,6 +27,11 @@ const Cart = () => {
 
   const removeItem = (slug) => {
     removeFromCart(slug);
+  };
+
+  const confirmClearCart = () => {
+    clearCart();
+    setModalIsOpen(false);
   };
 
   const getTotalPrice = () => {
@@ -157,10 +168,32 @@ const Cart = () => {
               <Link to="/gallery" className={styles.continueShoppingButton}>
                 Continua lo Shopping
               </Link>
+
+              <button
+                className={styles.clearCartButton}
+                onClick={() => setModalIsOpen(true)}
+              >
+                Svuota Carrello
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        contentLabel='Conferma svuota carrello'
+        className={styles.modal}
+        overlayClassName={styles.overlay}
+      >
+        <h2>Sei sicuro di voler svuotare il carrello?</h2>
+        <div className={styles.modalActions}>
+          <button onClick={confirmClearCart} className={styles.confirmButton}>Si</button>
+          <button onClick={() => setModalIsOpen(false)} className={styles.cancelButton}>No</button>
+        </div>
+      </Modal>
     </div>
   );
 };

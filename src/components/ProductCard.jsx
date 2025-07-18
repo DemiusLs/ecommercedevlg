@@ -31,6 +31,7 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
       name: product.name,
       price: product.price,
       image: product.img_url,
+      discount: product.discount,
       quantity: 1,
       maxStock: product.stock
 

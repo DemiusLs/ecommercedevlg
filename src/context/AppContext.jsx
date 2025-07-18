@@ -50,6 +50,9 @@ export const AppProvider = ({ children }) => {
         }
         const savedWishlist = localStorage.getItem('wishlist');
         if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) setCart(JSON.parse(savedCart));
     }, []);
     //useeffect all'attivazione del cambio dello stato della wishlist
     useEffect(() => {
@@ -66,6 +69,7 @@ export const AppProvider = ({ children }) => {
 
     //funzione di aggiunta al carrello
     const addToCart = (product) => {
+        console.log(product)
         setCart(prevCart => {
             const existing = prevCart.find(item => item.slug === product.slug);
 
@@ -94,6 +98,7 @@ export const AppProvider = ({ children }) => {
                 );
 
             }
+
             return [...prevCart, product];
         });
     };
@@ -105,6 +110,9 @@ export const AppProvider = ({ children }) => {
     const clearCart = () => {
         setCart([]);
     };
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
     //funzione di cambio stato del cuoricino wishlist
     const toggleWishlist = (product) => {
         setWishlist(prev => {

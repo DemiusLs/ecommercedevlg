@@ -20,12 +20,9 @@ const Homepage = () => {
       try {
         const [newData, saleData, featuredData] = await Promise.all([
           fetchFilteredPrints({ filter: "new" }),
-          fetchFilteredPrints({ filter: "sale" , limit: 10}),
+          fetchFilteredPrints({ filter: "sale", limit: 10 }),
           // fetchFilteredPrints({ filter: "featured" }),
         ]);
-
-        console.log("NEW", newData.data);
-        console.log("SALE", saleData.data);
 
         setNewProducts(newData.data);
         setSaleProducts(saleData.data);

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
+import Alert from '../components/Alert';
 
 
 
@@ -19,6 +20,9 @@ export const AppProvider = ({ children }) => {
     const [sortBy, setSortBy] = useState(initialSortBy);
     const [viewMode, setViewMode] = useState(initialViewMode);
     const [compareList, setCompareList] = useState([]);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('success');
 
 
 
@@ -52,6 +56,15 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
     }, [wishlist]);
+
+    //funzione componente ALERT
+    const showAlert = (message, type = 'success') => {
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertVisible(true);
+    };
+
+
     //funzione di aggiunta al carrello
     const addToCart = (product) => {
         setCart(prevCart => {
@@ -61,11 +74,17 @@ export const AppProvider = ({ children }) => {
             const totalRequested = existingQuantity + product.quantity;
 
             if (totalRequested > product.stock) {
-                alert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`);
-                return prevCart;
+                if (totalRequested > product.stock) {
+                    showAlert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`, `error`);
+
+                    return prevCart;
+                }
+
             } else {
                 // Show success feedback
-                alert(`${product.name} aggiunto al carrello!`)
+
+                showAlert(`${product.name} aggiunto al carrello!`, 'success');
+
             }
 
             if (existing) {
@@ -121,14 +140,14 @@ export const AppProvider = ({ children }) => {
     const addToCompare = (product) => {
         setCompareList((prev) => {
             if (prev.find(p => p.slug === product.slug)) {
-                alert(`"${product.name}" è già presente nella lista di confronto.`);
+                showAlert(`${product.name} è già presente nella lista di confronto.`, `error`);
                 return prev;
             }
             if (prev.length >= 3) {
-                alert("Puoi confrontare al massimo 3 prodotti.");
+                showAlert("Puoi confrontare al massimo 3 prodotti.", `error`);
                 return prev;
             }
-            alert(`"${product.name}" aggiunto alla lista di confronto.`);
+            showAlert(`${product.name} aggiunto alla lista di confronto.`);
             return [...prev, product];
         });
     };
@@ -149,6 +168,7 @@ export const AppProvider = ({ children }) => {
         isLoading,
         error,
         showWelcomePopup,
+        showAlert,
         sortBy,
         viewMode,
         addToCart,
@@ -170,6 +190,17 @@ export const AppProvider = ({ children }) => {
     return (
         <AppContext.Provider value={value}>
             {children}
+
+            {/* ALERT GLOBALE */}
+            <Alert
+                message={alertMessage}
+                visible={alertVisible}
+                type={alertType}
+                onClose={() => setAlertVisible(false)}
+            />
+
+
+
         </AppContext.Provider>
     );
 };

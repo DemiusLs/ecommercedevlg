@@ -11,8 +11,6 @@ const fetchFilteredPrints = async ({ filter, genre, query, sort, page = 1, limit
         params.append('limit', limit);
 
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/prints?${params.toString()}`);
-
-        console.log(response)
         return response.data;
     } catch (error) {
         console.error('Errore nel recupero delle stampe filtrate:', error);

@@ -4,12 +4,13 @@ import { useAppContext } from '../context/AppContext';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) => {
-  const { addToCart, cart, wishlist = [], toggleWishlist } = useAppContext();
+  const { addToCart, cart, wishlist = [], toggleWishlist, showAlert } = useAppContext();
 
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
 
     if (product.stock === 0) return;
 
@@ -19,7 +20,8 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
 
 
     if (currentQuantity >= product.stock) {
-      alert(`Hai già aggiunto tutte le ${product.stock} unità disponibili di "${product.name}" al carrello.`);
+      showAlert(`Hai già aggiunto tutte le ${product.stock} unità di "${product.name}" al carrello.`, 'error');
+
       return;
     }
 
@@ -57,6 +59,12 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
               e.preventDefault();
               e.stopPropagation();
               toggleWishlist(product);
+
+              if (wishlist.some(item => item.slug === product.slug)) {
+                showAlert(`"${product.name}" rimosso dai preferiti.`, 'error');
+              } else {
+                showAlert(`"${product.name}" aggiunto ai preferiti!`, 'success');
+              }
             }}
           >
             {wishlist.some(item => item.slug === product.slug) ? '❤️' : '🤍'}

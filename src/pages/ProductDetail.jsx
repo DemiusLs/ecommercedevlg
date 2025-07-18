@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import { useState, useEffect,} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
@@ -19,8 +19,9 @@ const ProductDetail = () => {
     removeFromWishlist,
     compareList,
     addToCompare,
-    removeFromCompare } = useAppContext()
-    
+    removeFromCompare,
+    showAlert } = useAppContext()
+
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -51,7 +52,7 @@ const ProductDetail = () => {
       removeFromCompare(product.slug);
     } else {
       if (compareList?.length >= 3) {
-        alert("Puoi confrontare al massimo 3 prodotti.");
+        showAlert("Puoi confrontare al massimo 3 prodotti.", `error`);
         return;
       }
       addToCompare(product);
@@ -126,7 +127,7 @@ const ProductDetail = () => {
 
 
     if (totalRequested > product.stock) {
-      alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
+      showAlert(`Hai già aggiunto tutte le ${product.stock} unità di "${product.name}" al carrello.`, 'error');
       return;
     }
 
@@ -135,7 +136,7 @@ const ProductDetail = () => {
       quantity,
     });
 
-    alert(`${product.name} aggiunto al carrello!`);
+    showAlert(`${product.name} aggiunto al carrello!`);
   };
 
 

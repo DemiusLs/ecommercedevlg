@@ -22,7 +22,7 @@ const AppHeader = () => {
   };
 
   const menuItems = [
-    { name: 'Homepage', path: '/' },
+    { name: 'Home', path: '/' },
     { name: 'Chi siamo', path: '/about' },
     { name: 'Galleria Stampe', path: '/gallery' },
     { name: 'Contatti', path: '/contact' },

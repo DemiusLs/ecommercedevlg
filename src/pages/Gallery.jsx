@@ -6,7 +6,7 @@ import ProductFilters from '../components/ProductFilters';
 import styles from './Gallery.module.css';
 import fetchFilteredPrints from '../services/filterPrints';
 const Gallery = () => {
-  const { viewMode, sortBy, products: productsFromContext = [] } = useAppContext();
+  const { viewMode, sortBy, products } = useAppContext();
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -14,7 +14,8 @@ const Gallery = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchParams] = useSearchParams();
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [totalFilteredCount, setTotalFilteredCount] = useState(0);
+  const [visibleProducts, setVisibleProducts] = useState([]);
 
   const filter = searchParams.get('filter');
   const query = searchParams.get('q');
@@ -23,15 +24,15 @@ const Gallery = () => {
     const fetchData = async () => {
       const result = await fetchFilteredPrints({
         filter,
-        genre: null, // o da URL se presente
+        genre: null,
         query,
-        sort: sortBy.replace('-', '_'), // 'price-asc' → 'price_asc'
+        sort: sortBy.replace('-', '_'),
         page,
         limit
       });
 
-      setFilteredProducts(result.data || []);
-      setPagedProducts(result.data || []);
+      setVisibleProducts(result.data || []); // solo quelli della pagina
+      setTotalFilteredCount(result.total || 0); // totale filtrato
       setTotalPages(result.totalPages || 1);
     };
 
@@ -52,7 +53,7 @@ const Gallery = () => {
         <div className={styles.header}>
           <h1 className={styles.title}>{getPageTitle()}</h1>
           <p className={styles.subtitle}>
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'prodotto' : 'prodotti'}
+            {visibleProducts.length} {visibleProducts.length === 1 ? 'prodotto' : 'prodotti'} mostrati di {totalFilteredCount}
           </p>
         </div>
         <ProductFilters />
@@ -68,15 +69,15 @@ const Gallery = () => {
 
         <div className={styles.content}>
           <div className={`${styles.grid} ${viewMode === 'list' ? styles.listView : styles.gridView}`}>
-            {pagedProducts.map((product) => (
+            {visibleProducts.map((product) => (
 
-       <ProductCard key={product.id} product={product} viewMode={viewMode} />
-              
+              <ProductCard key={product.id} product={product} viewMode={viewMode} />
+
 
             ))}
           </div>
 
-          {pagedProducts.length === 0 && (
+          {visibleProducts.length === 0 && (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>🎨</div>
               <h3 className={styles.emptyTitle}>Nessun prodotto trovato</h3>

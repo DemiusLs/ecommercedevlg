@@ -95,8 +95,6 @@ const WelcomePopup = () => {
             Iscriviti alla nostra newsletter per non perderti i nuovi arrivi e il buono sconto del 10%
           </p>
 
-          <p>Codice sconto: <strong>{discountCode}</strong></p>
-
           <form onSubmit={handleSubmit} className={styles.form}>
             <input
               type="email"

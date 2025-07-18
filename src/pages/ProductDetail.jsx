@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import { useState, useEffect, } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
@@ -19,8 +19,9 @@ const ProductDetail = () => {
     removeFromWishlist,
     compareList,
     addToCompare,
-    removeFromCompare } = useAppContext()
-    
+    removeFromCompare,
+    showAlert } = useAppContext()
+
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -51,7 +52,7 @@ const ProductDetail = () => {
       removeFromCompare(product.slug);
     } else {
       if (compareList?.length >= 3) {
-        alert("Puoi confrontare al massimo 3 prodotti.");
+        showAlert("Puoi confrontare al massimo 3 prodotti.", `error`);
         return;
       }
       addToCompare(product);
@@ -126,7 +127,7 @@ const ProductDetail = () => {
 
 
     if (totalRequested > product.stock) {
-      alert(`Puoi aggiungere solo ${product.stock - alreadyInCart} unità, oltre non disponibili!`);
+      showAlert(`Hai già aggiunto tutte le ${product.stock} unità di "${product.name}" al carrello.`, 'error');
       return;
     }
 
@@ -135,7 +136,7 @@ const ProductDetail = () => {
       quantity,
     });
 
-    alert(`${product.name} aggiunto al carrello!`);
+    showAlert(`${product.name} aggiunto al carrello!`);
   };
 
 
@@ -232,18 +233,22 @@ const ProductDetail = () => {
             <p className={styles.productDescription}>{product.description}</p>
 
             <div className={styles.priceContainer}>
-              <span className={styles.price}>{formatPrice(product.price - (product.price * product.discount / 100))}</span>
-              {product.originalPrice && (
-                <span className={styles.originalPrice}>
-                  {formatPrice(product.originalPrice)}
-                </span>
-              )}
-              {product.discount && (
-                <span className={styles.discount}>
-                  -{product.discount}%
-                </span>
+              <span className={styles.price}>
+                {formatPrice(product.price - (product.price * product.discount / 100))}
+              </span>
+
+              {product.discount > 0 && (
+                <>
+                  <span className={styles.originalPrice}>
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className={styles.discountBadge}>
+                    -{product.discount}%
+                  </span>
+                </>
               )}
             </div>
+
 
             <div className={styles.stockInfo}>
               {product.stock > 0 ? (
@@ -301,7 +306,7 @@ const ProductDetail = () => {
 
 
         </div>
-
+        <div className={styles.boxcarousel}>
         {relatedProducts.length > 0 && (
           <ProductCarousel
             title={`Altri in ${product.genre_name}`}
@@ -309,6 +314,7 @@ const ProductDetail = () => {
             viewAllLink={`/gallery?genre=${encodeURIComponent(product.genre_name)}`}
           />
         )}
+        </div>
       </div>
     </div>
   );

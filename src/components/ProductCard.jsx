@@ -71,11 +71,12 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
         />
 
         {product.status === 1 && <span className={styles.badge}>Nuovo</span>}
-        {product.discount && (
+        {product.discount && product.status !== 1 && (
           <span className={`${styles.badge} ${styles.saleBadge}`}>
-            Offerta {product.discount}%
+            {product.discount}%
           </span>
         )}
+
         {product.stock === 0 && (
           <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
             Esaurito

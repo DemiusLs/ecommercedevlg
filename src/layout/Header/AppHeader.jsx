@@ -9,21 +9,25 @@ const AppHeader = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { cart } = useAppContext();
   const navigate = useNavigate();
+  const { compareList } = useAppContext();
 
   const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${searchQuery.trim()}`);  //nella parte interna al navigate si inserisce la chaiamta api
+      // navigate(`/search?q=${searchQuery.trim()}`);  //nella parte interna al navigate si inserisce la chaiamta api
+      navigate(`/gallery?q=${searchQuery.trim()}`);
     }
   };
 
   const menuItems = [
-    { name: 'Homepage', path: '/' },
+    { name: 'Home', path: '/' },
     { name: 'Chi siamo', path: '/about' },
     { name: 'Galleria Stampe', path: '/gallery' },
-    { name: 'Contatti', path: '/contact' }
+    { name: 'Contatti', path: '/contact' },
+    { name: 'Confronta Prodotti', path: '/compare' }
+
   ];
 
   return (
@@ -31,7 +35,7 @@ const AppHeader = () => {
     <header className={styles.header}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <img src="/logo-header-1.png" alt="" className={styles.logoImage}/>
+          <img src="/logo-header-1.png" alt="" className={styles.logoImage} />
         </Link>
 
         <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
@@ -60,6 +64,10 @@ const AppHeader = () => {
               🔍
             </button>
           </form>
+
+          <Link to="/wishlist" className={styles.wishlistButton}>
+            ❤️
+          </Link>
 
           <Link to="/cart" className={styles.cartButton}>
             🛒

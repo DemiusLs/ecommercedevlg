@@ -58,9 +58,9 @@
 
 .addToCartButton {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
+  bottom: 27px;
+  left: 290px;
+  /*right: 12px; */
   background: rgba(26, 26, 26, 0.9);
   color: white;
   border: none;
@@ -72,7 +72,20 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.3s ease;
+  
+  
 }
+
+.card:not(.cardList) {
+  min-height: 360px; /* o un valore adatto in base ai tuoi contenuti */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card:not(.cardList) .content {
+  padding-bottom: 2.5rem;
+}
+
 
 .card:hover .addToCartButton {
   opacity: 1;
@@ -90,6 +103,7 @@
 
 .content {
   padding: 1.25rem;
+  padding-bottom: 2.5rem;
 }
 
 .name {
@@ -115,6 +129,23 @@
   margin-bottom: 0.75rem;
 }
 
+.wishlistIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.5rem;
+  z-index: 2;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.3s;
+  user-select: none;
+}
+
+.wishlistIcon:hover {
+  transform: scale(1.1);
+  color: red;
+}
+
+
 .price {
   font-size: 1.2rem;
   font-weight: 700;
@@ -139,6 +170,52 @@
 .outOfStock {
   color: #e74c3c;
   font-weight: 500;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+.cardList .imageContainer {
+  flex: 0 0 200px;
+  aspect-ratio: unset;
+  height: 100%;
+}
+
+.cardList .image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardList .content {
+  flex: 1;
+  padding: 1rem 1rem 1rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cardList {
+ height: 27.5vh;
+}
+.cardList .stock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+.cardList .addToCartButton {
+  position: static;
+  opacity: 1;
+  transform: none;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  width: auto;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {

@@ -14,30 +14,6 @@ If you are developing a production application, we recommend using TypeScript wi
 -------DA COMPLETARE-------------------
 12. assistente AI (coefficiente: 5)
 chatbot che aiuta gli utenti a trovare risposte sul prodotto visualizzato
--------------------------------------------------
-11. pagamento (coefficiente: 4)
-integrare un sistema di pagamento simulato 
-------------------------------------
-
-IN CORSO
-
----IN CORSO VIRGILIO--------------------
-6. paginazione dei risultati (coefficiente: 2)
-implementare un sistema di paginazione per i risultati di ricerca
-possibilità di selezionare il numero di prodotti da visualizzare per pagina
-mantenere i filtri applicati durante il passaggio tra le pagine
---------------------------------------------------
-
-------IN CORSO DAMIANO--------
-7. prodotti correlati (coefficiente: 2)
-visualizzare i prodotti correlati nella pagina di dettaglio di un prodotto
--------------------------------------------
------IN CORSO IO---------
-10. confronta prodotti (coefficiente: 3)
-possibilità di selezionare fino a 3 prodotti e confrontarli in tabella
------------------------------------------------
-
-
 
 
 
@@ -45,6 +21,20 @@ possibilità di selezionare fino a 3 prodotti e confrontarli in tabella
 5. wishlist (coefficiente: 2)
 aggiunta/rimozione prodotti da una lista dei desideri
 visualizzazione della lista in una pagina dedicata
--------------------------------------------------------------------
+-------------------------------------------
+10. confronta prodotti (coefficiente: 3)
+possibilità di selezionare fino a 3 prodotti e confrontarli in tabella
+-----------------------------------------------
+7. prodotti correlati (coefficiente: 2)
+visualizzare i prodotti correlati nella pagina di dettaglio di un prodotto
+----------------------------------------------------------------
+6. paginazione dei risultati (coefficiente: 2)
+implementare un sistema di paginazione per i risultati di ricerca
+possibilità di selezionare il numero di prodotti da visualizzare per pagina
+mantenere i filtri applicati durante il passaggio tra le pagine
+-------------------------------------------------
+11. pagamento (coefficiente: 4)
+integrare un sistema di pagamento simulato 
+------------------------------------
 
 

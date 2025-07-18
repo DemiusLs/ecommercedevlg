@@ -1,0 +1,201 @@
+.container {
+  margin: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--bg-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+thead th {
+  padding: 0.75rem 1rem;
+  position: relative;
+  vertical-align: top;
+}
+
+tbody td, tbody th {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1rem;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.productHeader {
+  position: relative;
+  padding-top: 2rem;
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: transparent;
+  border: none;
+  color: var(--danger-color);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.removeButton:hover {
+  color: #b91c1c;
+}
+
+.productImage {
+  width: 100px;
+  height: auto;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  object-fit: contain;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.productName {
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+  margin: 0 auto;
+}
+
+.noCompare {
+  text-align: center;
+  font-style: italic;
+  color: #6b7280; /* grigio */
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.container {
+  padding: 2rem;
+}
+
+.noCompare {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #888;
+  margin-top: 2rem;
+}
+
+.productHeader {
+  text-align: center;
+  vertical-align: top;
+  padding: 1rem;
+  position: relative;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.productImage {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.imageContainer:hover .removeButton {
+  opacity: 1;
+}
+
+.productName {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+
+/* Responsive */
+  @media (max-width: 1200px) {
+  .productImage {
+    width: 80px;
+    height: auto;
+  }
+
+  .productName {
+    max-width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .removeButton {
+    opacity: 1 !important;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    font-size: 1rem;
+    padding: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 10;
+    top: 2px;
+    right: 2px;
+  }
+
+  .imageContainer {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .imageContainer:hover .removeButton {
+    opacity: 1;
+  }
+
+  th,
+  td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}

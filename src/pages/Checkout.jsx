@@ -8,9 +8,10 @@ const Checkout = () => {
   const { cart, clearCart, products } = useAppContext();
   const navigate = useNavigate();
 
-  const [couponCode, setCouponCode] = useState('');
+  
   const [discount, setDiscount] = useState(null);
   const [couponError, setCouponError] = useState('');
+  const [couponValid, setCouponValid] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -53,11 +54,8 @@ const Checkout = () => {
     cart.reduce((total, item) => total + getDiscountedPrice(item) * item.quantity, 0);
 
   const getDiscountAmount = () => {
-    if (!discount) return 0;
-    const subtotal = getSubtotal();
-    return discount.type === 'percentage'
-      ? (subtotal * discount.discount) / 100
-      : discount.discount;
+    if (!couponValid || !discount?.discount_value) return 0;
+    return (getSubtotal() * discount.discount_value) / 100;
   };
 
   const getShippingCost = () => getSubtotal() >= 75 ? 0 : 5.99;
@@ -69,28 +67,22 @@ const Checkout = () => {
     currency: 'EUR'
   }).format(price);
 
-  const applyCoupon = () => {
+  const applyCoupon = async () => {
     setCouponError('');
-    const coupon = products.coupons?.find(c => c.code === couponCode.toUpperCase());
+    setCouponValid(false);
 
-    if (!coupon) {
-      setCouponError('Codice sconto non valido');
-      return;
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/discounts/${couponCode.trim()}`);
+
+      if (res.data) {
+        setDiscount(res.data); // Salva oggetto { code, discount }
+        setCouponValid(true);
+      }
+    } catch (error) {
+      setCouponError(error.response?.data?.error || 'Codice sconto non valido');
+      setDiscount(null);
+      setCouponValid(false);
     }
-
-    const now = new Date();
-    if (now < new Date(coupon.validFrom) || now > new Date(coupon.validTo)) {
-      setCouponError('Codice sconto scaduto');
-      return;
-    }
-
-    if (getSubtotal() < coupon.minAmount) {
-      setCouponError(`Ordine minimo ${formatPrice(coupon.minAmount)} richiesto`);
-      return;
-    }
-
-    setDiscount(coupon);
-    setCouponCode('');
   };
 
   const removeCoupon = () => setDiscount(null);
@@ -113,11 +105,11 @@ const Checkout = () => {
 
     if (!formData.email.trim() || !formData.email.includes('@') || !formData.email.includes('.')) {
       newErrors.email = "Per favore, inserisci un'email valida.";
-/*
-    if (!formData.email) {
-      newErrors.email = 'Email richiesta'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Formato email non valido" */
+      /*
+          if (!formData.email) {
+            newErrors.email = 'Email richiesta'
+          } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = "Formato email non valido" */
 
     }
     if (!formData.phone) newErrors.phone = 'Telefono richiesto';
@@ -152,7 +144,8 @@ const Checkout = () => {
         prints: cart.map(item => ({
           slug: item.slug,
           quantity_req: item.quantity
-        }))
+        })),
+        discount_code: discount?.code || null
       });
 
       const { total_price, order_id } = response.data;

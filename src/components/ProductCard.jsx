@@ -86,11 +86,6 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
           </span>
         )}
 
-        {product.stock === 0 && (
-          <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
-            Esaurito
-          </span>
-        )}
       </div>
 
 

@@ -8,7 +8,8 @@ const Checkout = () => {
   const { cart, clearCart, products } = useAppContext();
   const navigate = useNavigate();
 
-  
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValue, setCouponValue] = useState('');
   const [discount, setDiscount] = useState(null);
   const [couponError, setCouponError] = useState('');
   const [couponValid, setCouponValid] = useState(false)

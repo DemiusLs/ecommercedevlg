@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styles from './PopupAdd.module.css';
 
 const popupAdd = ({ message, type = 'success', onClose, duration = 3000 }) => {

@@ -2,16 +2,16 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './Cart.module.css';
 import { useState } from 'react';
-import ConfirmModal from '../pages/ConfirmModal';
+import ConfirmModal from './ConfirmModal';
 
 const Cart = () => {
-  const { cart, clearCart, removeFromCart, setCart } = useAppContext();
-const [isModalOpen, setIsModalOpen] = useState(false)
+  const { cart, clearCart, removeFromCart, setCart, products } = useAppContext();
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-const handleClearCart = () => {
-  clearCart();
-  setIsModalOpen(false);
-};
+  const handleClearCart = () => {
+    clearCart();
+    setIsModalOpen(false);
+  };
 
 
   const updateQuantity = (slug, newQuantity) => {
@@ -59,6 +59,8 @@ const handleClearCart = () => {
   const totalPrice = getTotalPrice();
   const needsForFreeShipping = freeShippingThreshold - totalPrice;
 
+
+  // interfaccia se il carrello è vuoto
   if (cart.length === 0) {
     return (
       <div className={styles.emptyCart}>
@@ -72,15 +74,14 @@ const handleClearCart = () => {
             <Link to="/gallery" className={styles.shopButton}>
               Esplora la Galleria
             </Link>
-  <button onClick={() => setModalIsOpen(true)} className={styles.clearCartButton}>
-                Svuota Carrello
-              </button>
           </div>
         </div>
       </div>
     );
   }
 
+
+  // interfaccia se ci sono prodotti nel carrello
   return (
     <div className={styles.cart}>
       <div className={styles.container}>
@@ -94,16 +95,21 @@ const handleClearCart = () => {
         )}
 
         <div className={styles.cartContent}>
+
+          {/* CARD PRODOTTO */}
           <div className={styles.cartItems}>
             {cart.map((item) => {
               const discountedPrice = getDiscountedPrice(item);
               const totalItemPrice = discountedPrice * item.quantity;
               return (
+
+                // immagine prodotto
                 <div key={item.slug} className={styles.cartItem}>
                   <div className={styles.itemImage}>
-                    <img src={item.img_url} alt={item.name} />
+                    <img src={item.image} alt={item.name} />
                   </div>
 
+                  {/* nome prodotto, prezzo originale, prezzo scontato e gestione disponibilità */}
                   <div className={styles.itemInfo}>
                     <h3 className={styles.itemName}>{item.name}</h3>
 
@@ -120,15 +126,16 @@ const handleClearCart = () => {
                       <p className={styles.itemPrice}>{formatPrice(item.price)}</p>
                     )}
 
-                    {item.quantity > item.maxStock && (
-                      <div className={styles.stockWarning}>
-                        <span className={styles.warningText}>
-                          ⚠️ Solo {item.maxStock} disponibili
-                        </span>
-                      </div>
-                    )}
+                    <span className={item.maxStock > 0 ? styles.inStock : styles.outOfStock}>
+                      {item.maxStock > 0
+                        ? item.maxStock < 5
+                          ? `Solo ${item.maxStock} rimasti`
+                          : 'Disponibile'
+                        : 'Non disponibile'}
+                    </span>
                   </div>
 
+                  {/* gestione di aggiungere o togliere lo stesso prodotto + rimuove il prodotto dal carrello */}
                   <div className={styles.itemActions}>
                     <div className={styles.quantityControls}>
                       <button
@@ -155,6 +162,7 @@ const handleClearCart = () => {
                     </button>
                   </div>
 
+                  {/* prezzo totale */}
                   <div className={styles.itemTotal}>
                     {formatPrice(totalItemPrice)}
                   </div>
@@ -163,15 +171,21 @@ const handleClearCart = () => {
             })}
           </div>
 
+
+          {/* RIEPILOGO ORDINE */}
           <div className={styles.cartSummary}>
             <div className={styles.summaryCard}>
               <h3 className={styles.summaryTitle}>Riepilogo Ordine</h3>
 
+
+              {/* subtotale */}
               <div className={styles.summaryRow}>
                 <span>Subtotale</span>
                 <span>{formatPrice(totalPrice)}</span>
               </div>
 
+
+              {/* spedizione */}
               <div className={styles.summaryRow}>
                 <span>Spedizione</span>
                 <span>
@@ -183,6 +197,8 @@ const handleClearCart = () => {
                 </span>
               </div>
 
+
+              {/* totale */}
               <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                 <span>Totale</span>
                 <span>
@@ -199,19 +215,24 @@ const handleClearCart = () => {
               <Link to="/gallery" className={styles.continueShoppingButton}>
                 Continua lo Shopping
               </Link>
+
               <button className={styles.clearCartButton} onClick={() => setIsModalOpen(true)}>
                 Svuota Carrello
               </button>
+
             </div>
           </div>
+
         </div>
       </div>
+
       <ConfirmModal
-     isOpen={isModalOpen}
-  onConfirm={handleClearCart}
-  onCancel={() => setIsModalOpen(false)}
-  message="Sei sicuro di voler svuotare il carrello?"
+        isOpen={isModalOpen}
+        onConfirm={handleClearCart}
+        onCancel={() => setIsModalOpen(false)}
+        message="Sei sicuro di voler svuotare il carrello?"
       />
+
     </div>
   );
 };

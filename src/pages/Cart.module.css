@@ -88,8 +88,36 @@
   margin: 0;
 }
 
+.priceGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+}
+
+.originalPrice {
+  font-size: 0.95rem; 
+  color: #999;
+  text-decoration: line-through; 
+}
+
+.discountedPrice {
+  font-size: 1.1rem; 
+  font-weight: 700;
+  color: #1a1a1a; 
+}
+
 .stockWarning {
   margin-top: 0.5rem;
+}
+
+.inStock {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.outOfStock {
+  color: #e74c3c;
+  font-weight: 500;
 }
 
 .warningText {

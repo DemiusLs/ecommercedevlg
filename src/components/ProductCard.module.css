@@ -8,8 +8,11 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   height: 100%;
+
   position: relative;
   z-index: 1; /* Z-index di default per le card */
+  
+
 }
 
 .card:hover {
@@ -54,14 +57,12 @@
   background: #ff4757;
 }
 
-.outOfStockBadge {
-  background: #999;
-}
 
 .addToCartButton {
   position: absolute;
   bottom: 27px;
   left: 290px; /* Adjust this position as needed */
+
   background: rgba(26, 26, 26, 0.9);
   color: white;
   border: none;
@@ -252,4 +253,16 @@
     opacity: 1;
     transform: none;
   }
+
 }
+
+}
+
+@media (max-width: 480px) {
+  .outOfStockBadge {
+    font-size: 0.6rem;
+    padding: 2px 5px;
+  }
+}
+
+

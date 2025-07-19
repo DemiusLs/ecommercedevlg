@@ -106,7 +106,7 @@ const Cart = () => {
                 // immagine prodotto
                 <div key={item.slug} className={styles.cartItem}>
                   <div className={styles.itemImage}>
-                    <img src={item.image} alt={item.name} />
+                    <img src={item.img_url} alt={item.name} />
                   </div>
 
                   {/* nome prodotto, prezzo originale, prezzo scontato e gestione disponibilità */}

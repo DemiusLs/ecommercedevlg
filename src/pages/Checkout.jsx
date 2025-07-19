@@ -9,10 +9,8 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   const [couponCode, setCouponCode] = useState('');
-  const [couponValue, setCouponValue] = useState('');
-  const [discount, setDiscount] = useState(null);
+  const [discountValue, setDiscountValue] = useState(0);
   const [couponError, setCouponError] = useState('');
-  const [couponValid, setCouponValid] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,6 +26,7 @@ const Checkout = () => {
     cvv: '',
     terms: false
   });
+
 
   const [errors, setErrors] = useState({});
 
@@ -55,11 +54,12 @@ const Checkout = () => {
     cart.reduce((total, item) => total + getDiscountedPrice(item) * item.quantity, 0);
 
   const getDiscountAmount = () => {
-    if (!couponValid || !discount?.discount_value) return 0;
-    return (getSubtotal() * discount.discount_value) / 100;
+    return (getSubtotal() * discountValue) / 100;
   };
 
-  const getShippingCost = () => getSubtotal() >= 75 ? 0 : 5.99;
+  const getShippingCost = () => {
+  return getSubtotal()-getDiscountAmount() >= 75 ? 0 : 5.99;
+};
 
   const getTotal = () => getSubtotal() - getDiscountAmount() + getShippingCost();
 
@@ -70,19 +70,18 @@ const Checkout = () => {
 
   const applyCoupon = async () => {
     setCouponError('');
-    setCouponValid(false);
+    setDiscountValue(0);
 
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/discounts/${couponCode.trim()}`);
-
-      if (res.data) {
-        setDiscount(res.data); // Salva oggetto { code, discount }
-        setCouponValid(true);
+      if (res.data?.discount_value) {
+        setDiscountValue(res.data.discount_value); // es: 15
+      } else {
+        setCouponError('Codice non valido.');
       }
     } catch (error) {
-      setCouponError(error.response?.data?.error || 'Codice sconto non valido');
-      setDiscount(null);
-      setCouponValid(false);
+      setCouponError(error.response?.data?.message || 'Errore durante la verifica del codice.');
+      setDiscountValue(0);
     }
   };
 
@@ -134,6 +133,13 @@ const Checkout = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
 
+    // Blocco se coupon inserito ma non valido
+    if (couponCode && discountValue === 0) {
+      alert('Applica un codice sconto valido prima di completare l’ordine.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, {
         full_name: `${formData.firstName} ${formData.lastName}`,
@@ -146,26 +152,19 @@ const Checkout = () => {
           slug: item.slug,
           quantity_req: item.quantity
         })),
-        discount_code: discount?.code || null
+        discount_code: discountValue > 0 ? couponCode.trim() : null
       });
 
       const { total_price, order_id } = response.data;
 
       clearCart();
-      setDiscount(null);
-
-      alert(`Ordine confermato! Prezzo totale: €${total_price}\nRiceverai una email di conferma.`);
-      console.log(`Ordine #${order_id} - Prezzo totale confermato backend: €${total_price}`);
-
+      setDiscountValue(0);
+      setCouponCode('');
+      alert(`Ordine confermato! Totale: €${total_price}\nRiceverai una email di conferma.`);
       navigate('/');
-
     } catch (error) {
       console.error(error);
-      if (error.response?.data?.error) {
-        alert(`Errore: ${error.response.data.error}`);
-      } else {
-        alert('Errore durante il checkout. Riprova più tardi.');
-      }
+      alert(error.response?.data?.error || 'Errore durante il checkout.');
     } finally {
       setIsSubmitting(false);
     }
@@ -386,7 +385,7 @@ const Checkout = () => {
 
                   return (
                     <div key={index} className={styles.orderItem}>
-                      <img src={item.image} alt={item.name} className={styles.itemImage} />
+                      <img src={item.img_url} alt={item.name} className={styles.itemImage} />
                       <div className={styles.itemDetails}>
                         <span>{item.name}</span>
                         <span>Qty: {item.quantity}</span>
@@ -411,12 +410,12 @@ const Checkout = () => {
                     placeholder="Codice sconto"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    disabled={!!discount}
+                    disabled={discountValue > 0}
                   />
                   <button
                     type="button"
                     onClick={applyCoupon}
-                    disabled={!!discount || !couponCode.trim()}
+                    disabled={discountValue > 0 || !couponCode.trim()}
                   >
                     Applica
                   </button>
@@ -424,10 +423,14 @@ const Checkout = () => {
 
                 {couponError && <div className={styles.error}>{couponError}</div>}
 
-                {discount && (
+                {discountValue > 0 && (
                   <div className={styles.appliedCoupon}>
-                    <span>Codice "{discount.code}" applicato</span>
-                    <button type="button" onClick={removeCoupon}>Rimuovi</button>
+                    <span>Codice "{couponCode}" applicato - Sconto {discountValue}%</span>
+                    <button type="button" onClick={() => {
+                      setDiscountValue(0);
+                      setCouponCode('');
+                      setCouponError('');
+                    }}>Rimuovi</button>
                   </div>
                 )}
               </div>
@@ -438,7 +441,7 @@ const Checkout = () => {
                   <span>{formatPrice(getSubtotal())}</span>
                 </div>
 
-                {discount && (
+                {discountValue > 0 && (
                   <div className={styles.summaryRow}>
                     <span>Sconto</span>
                     <span>-{formatPrice(getDiscountAmount())}</span>

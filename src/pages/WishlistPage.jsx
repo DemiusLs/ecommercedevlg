@@ -19,9 +19,9 @@ const Wishlist = () => {
   return (
     <div className={styles.wishlist}>
       <div className={styles.container}>
-        <h1 className={styles.title}>La tua Wishlist</h1>
 
         <div className={styles.header}>
+          <h1 className={styles.title}>La tua Wishlist</h1>
           {wishlist.length > 0 && (
             <button className={styles.clearButton} onClick={() => setShowModal(true)}>
               Svuota Wishlist
@@ -38,7 +38,7 @@ const Wishlist = () => {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  showWishlistButton={false}
+                  showWishlistButton={true}
                 />
               ))}
             </div>

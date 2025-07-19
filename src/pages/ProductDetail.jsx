@@ -1,4 +1,4 @@
-import { useState, useEffect, } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './ProductDetail.module.css';
@@ -7,6 +7,7 @@ import { FaBalanceScale } from 'react-icons/fa';
 import ProductCarousel from '../components/ProductCarousel';
 import fetchFilteredPrints from '../services/filterPrints.js';
 import axios from 'axios';
+import TooltipPortal from '../components/TooltipPortal.jsx';
 
 
 const ProductDetail = () => {
@@ -29,6 +30,9 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [compareAlert, setCompareAlert] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+
+  //ref per il bottone della wishlist
+  const wishlistButtonRef = useRef(null);
 
 
   const isWishlisted = product && wishlist.some(item => item.slug === product.slug);
@@ -214,13 +218,17 @@ const ProductDetail = () => {
             </div>
 
             <h1 className={styles.productName}>{product.name}
-              <button className={styles.wishlistButton} onClick={toggleWishlist}>
+              <button ref={wishlistButtonRef} className={styles.wishlistButton} onClick={toggleWishlist}>
                 {isWishlisted ? (
                   <FaHeart className={styles.heartIconFilled} />
                 ) : (
                   <FaRegHeart className={styles.heartIconEmpty} />
                 )}
               </button>
+              {/* Tooltip per la wishlist */}
+              <TooltipPortal targetRef={wishlistButtonRef}>
+                {isWishlisted ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+              </TooltipPortal>
               <button
                 className={styles.compareButton}
                 onClick={handleCompare}

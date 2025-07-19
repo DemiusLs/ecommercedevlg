@@ -1,26 +1,30 @@
-
 .card {
   display: block;
   text-decoration: none;
   color: inherit;
   background: white;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: hidden; /* ✨ Mantienilo se vuoi bordi arrotondati o altri elementi tagliati */
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   height: 100%;
+
+  position: relative;
+  z-index: 1; /* Z-index di default per le card */
   
+
 }
 
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 2; /* Aumenta lo z-index al hover per apparire sopra le altre card */
 }
 
 .imageContainer {
   position: relative;
   aspect-ratio: 4/3;
-  overflow: hidden;
+  overflow: hidden; /* Mantienilo se vuoi che l'immagine non sborderli */
   background: #f8f8f8;
 }
 
@@ -51,15 +55,14 @@
 
 .saleBadge {
   background: #ff4757;
-
 }
 
 
 .addToCartButton {
   position: absolute;
   bottom: 27px;
-  left: 255px;
-  /*right: 12px; */
+  left: 290px; /* Adjust this position as needed */
+
   background: rgba(26, 26, 26, 0.9);
   color: white;
   border: none;
@@ -71,8 +74,6 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.3s ease;
-  
-  
 }
 
 .card:not(.cardList) {
@@ -81,10 +82,10 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
 .card:not(.cardList) .content {
   padding-bottom: 2.5rem;
 }
-
 
 .card:hover .addToCartButton {
   opacity: 1;
@@ -128,22 +129,39 @@
   margin-bottom: 0.75rem;
 }
 
-.wishlistIcon {
-  position: absolute;
+/* Contenitore per l'icona Wishlist - nessun tooltipText qui */
+.wishlistIconContainer {
+  position: absolute; /* Posizionato rispetto al .card */
   top: 8px;
   right: 8px;
-  font-size: 1.5rem;
-  z-index: 2;
+  z-index: 10; /* Z-index per il bottone del cuore */
+  display: inline-block;
+}
+
+/* Stili per il bottone del cuore */
+.wishlistIcon {
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  transition: transform 0.2s, color 0.3s;
+  font-size: 1.5rem;
+  color: white; /* Colore di default per il cuore VUOTO (FaRegHeart) */
+  transition: transform 0.2s;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wishlistIcon:hover {
   transform: scale(1.1);
-  color: red;
 }
 
+.wishlistIcon svg {
+  fill: currentColor;
+}
+
+/* ✨ RIMUOSSE TUTTE LE REGOLE RELATIVE A .tooltipText DA QUI */
 
 .price {
   font-size: 1.2rem;
@@ -197,9 +215,11 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
 .cardList {
- height: 27.5vh;
+  height: 27.5vh;
 }
+
 .cardList .stock {
   display: flex;
   justify-content: space-between;
@@ -207,6 +227,7 @@
   margin-top: auto;
   padding-top: 1rem;
 }
+
 .cardList .addToCartButton {
   position: static;
   opacity: 1;
@@ -232,6 +253,9 @@
     opacity: 1;
     transform: none;
   }
+
+}
+
 }
 
 @media (max-width: 480px) {
@@ -240,4 +264,5 @@
     padding: 2px 5px;
   }
 }
+
 

@@ -61,8 +61,7 @@
 .addToCartButton {
   position: absolute;
   bottom: 27px;
-  left: 290px; /* Adjust this position as needed */
-
+  left: 265px; 
   background: rgba(26, 26, 26, 0.9);
   color: white;
   border: none;

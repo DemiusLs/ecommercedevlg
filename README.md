@@ -38,3 +38,67 @@ integrare un sistema di pagamento simulato
 ------------------------------------
 
 
+import { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import axios from "axios";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    setLoading(true);
+
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/create-payment-intent`, {
+        amount: 1000, // €10.00 in centesimi
+      });
+
+      const result = await stripe.confirmCardPayment(data.client_secret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
+
+      if (result.error) {
+        alert(result.error.message);
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          alert("✅ Pagamento completato!");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante il pagamento");
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <CardElement />
+      <button type="submit" disabled={!stripe || loading}>
+        {loading ? "Elaborazione..." : "Conferma e Paga"}
+      </button>
+    </form>
+  );
+};
+
+const Checkout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
+  );
+};
+
+export default Checkout;

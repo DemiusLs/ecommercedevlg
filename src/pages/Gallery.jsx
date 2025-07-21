@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import styles from './Gallery.module.css';
 import fetchFilteredPrints from '../services/filterPrints';
+
 const Gallery = () => {
   const { viewMode, sortBy, products } = useAppContext();
 

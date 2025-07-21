@@ -20,6 +20,8 @@ export const AppProvider = ({ children }) => {
     const [sortBy, setSortBy] = useState(initialSortBy);
     const [viewMode, setViewMode] = useState(initialViewMode);
     const [compareList, setCompareList] = useState([]);
+
+    // variabili useState per componente ALERT
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertType, setAlertType] = useState('success');
@@ -50,11 +52,16 @@ export const AppProvider = ({ children }) => {
         }
         const savedWishlist = localStorage.getItem('wishlist');
         if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) setCart(JSON.parse(savedCart));
     }, []);
-    //useeffect all'attivazione del cambio dello stato della wishlist
+
+    //useffect all'attivazione del cambio dello stato della wishlist
     useEffect(() => {
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
     }, [wishlist]);
+
 
     //funzione componente ALERT
     const showAlert = (message, type = 'success') => {
@@ -66,6 +73,7 @@ export const AppProvider = ({ children }) => {
 
     //funzione di aggiunta al carrello
     const addToCart = (product) => {
+        console.log(product)
         setCart(prevCart => {
             const existing = prevCart.find(item => item.slug === product.slug);
 
@@ -75,15 +83,11 @@ export const AppProvider = ({ children }) => {
             if (totalRequested > product.stock) {
                 if (totalRequested > product.stock) {
                     showAlert(`Hai superato la quantità disponibile per "${product.name}". Disponibili: ${product.stock}`, `error`);
-
                     return prevCart;
                 }
-
             } else {
                 // Show success feedback
-
                 showAlert(`${product.name} aggiunto al carrello!`, 'success');
-
             }
 
             if (existing) {
@@ -92,19 +96,29 @@ export const AppProvider = ({ children }) => {
                         ? { ...item, quantity: item.quantity + product.quantity }
                         : item
                 );
-
             }
+
             return [...prevCart, product];
         });
     };
+
+
     //funzione di rimozione dal carrello
     const removeFromCart = (productSlug) => {
         setCart(prevCart => prevCart.filter(item => item.slug !== productSlug));
     };
+
+
     //funzione di cancellazione carrello
     const clearCart = () => {
         setCart([]);
     };
+
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
+
+
     //funzione di cambio stato del cuoricino wishlist
     const toggleWishlist = (product) => {
         setWishlist(prev => {
@@ -116,11 +130,15 @@ export const AppProvider = ({ children }) => {
             }
         });
     };
+
+
     //funzione di controllo se prodotto già interno alla wishlist
     const isInWishlist = (product) => {
         if (!product) return false; // protezione se product è null/undefined
         return wishlist.some(item => item.slug === product.slug);
     };
+
+
     //funzione di aggiunta alla wishlist
     const addToWishlist = (product) => {
         setWishlist(prev => {
@@ -130,15 +148,21 @@ export const AppProvider = ({ children }) => {
             return prev; // se già presente, non aggiunge
         });
     };
+
+
     //funzione di rimozione della wishlist
     const removeFromWishlist = (productSlug) => {
         setWishlist(prev => prev.filter(item => item.slug !== productSlug));
     };
+
+
     //funzione di una completa rimozione della wishlist
     const clearWishlist = () => {
         setWishlist([]);
         localStorage.removeItem('wishlist'); // opzionale: se la salvi su localStorage
     };
+
+
     //funzioni per il confronto prodotti, fatte solamente per esercizio ma non per funzionalità poichè non possiamo confrontare due prodotti d'arte
     // aggiungi prodotto a confronto
     const addToCompare = (product) => {
@@ -206,9 +230,6 @@ export const AppProvider = ({ children }) => {
                 type={alertType}
                 onClose={() => setAlertVisible(false)}
             />
-
-
-
         </AppContext.Provider>
     );
 };

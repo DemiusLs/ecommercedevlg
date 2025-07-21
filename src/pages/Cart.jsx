@@ -2,44 +2,56 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import styles from './Cart.module.css';
 import { useState } from 'react';
-import ConfirmModal from '../pages/ConfirmModal';
+import ConfirmModal from './ConfirmModal';
 
 const Cart = () => {
-  const { cart, clearCart, removeFromCart, setCart } = useAppContext();
-const [isModalOpen, setIsModalOpen] = useState(false)
+  const { cart, clearCart, removeFromCart, setCart, products } = useAppContext();
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-const handleClearCart = () => {
-  clearCart();
-  setIsModalOpen(false);
-};
+  const handleClearCart = () => {
+    clearCart();
+    setIsModalOpen(false);
+  };
 
 
   const updateQuantity = (slug, newQuantity) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.slug === slug) {
-          return {
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.slug === slug
+          ? {
             ...item,
-            quantity: newQuantity > item.maxStock ? item.maxStock : newQuantity < 1 ? 1 : newQuantity
-          };
-        }
-        return item;
-      });
-    });
+            quantity:
+              newQuantity > item.maxStock
+                ? item.maxStock
+                : newQuantity < 1
+                  ? 1
+                  : newQuantity,
+          }
+          : item
+      )
+    );
   };
 
-  const removeItem = (slug) => {
+  const removeItem = slug => {
     removeFromCart(slug);
   };
 
+  const getDiscountedPrice = (item) =>
+    item.discount > 0
+      ? item.price * (1 - item.discount / 100)
+      : item.price;
+
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => {
+      const discountedPrice = getDiscountedPrice(item);
+      return total + discountedPrice * item.quantity;
+    }, 0);
   };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('it-IT', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
     }).format(price);
   };
 
@@ -47,6 +59,8 @@ const handleClearCart = () => {
   const totalPrice = getTotalPrice();
   const needsForFreeShipping = freeShippingThreshold - totalPrice;
 
+
+  // interfaccia se il carrello è vuoto
   if (cart.length === 0) {
     return (
       <div className={styles.emptyCart}>
@@ -60,15 +74,14 @@ const handleClearCart = () => {
             <Link to="/gallery" className={styles.shopButton}>
               Esplora la Galleria
             </Link>
-  <button onClick={() => setModalIsOpen(true)} className={styles.clearCartButton}>
-                Svuota Carrello
-              </button>
           </div>
         </div>
       </div>
     );
   }
 
+
+  // interfaccia se ci sono prodotti nel carrello
   return (
     <div className={styles.cart}>
       <div className={styles.container}>
@@ -82,68 +95,97 @@ const handleClearCart = () => {
         )}
 
         <div className={styles.cartContent}>
+
+          {/* CARD PRODOTTO */}
           <div className={styles.cartItems}>
-            {cart.map((item) => (
-              <div key={item.slug} className={styles.cartItem}>
-                <div className={styles.itemImage}>
-                  <img src={item.image} alt={item.name} />
-                </div>
+            {cart.map((item) => {
+              const discountedPrice = getDiscountedPrice(item);
+              const totalItemPrice = discountedPrice * item.quantity;
+              return (
 
-                <div className={styles.itemInfo}>
-                  <h3 className={styles.itemName}>{item.name}</h3>
-                  <p className={styles.itemPrice}>{formatPrice(item.price)}</p>
+                // immagine prodotto
+                <div key={item.slug} className={styles.cartItem}>
+                  <div className={styles.itemImage}>
+                    <img src={item.img_url} alt={item.name} />
+                  </div>
 
-                  {item.quantity > item.maxStock && (
-                    <div className={styles.stockWarning}>
-                      <span className={styles.warningText}>
-                        ⚠️ Solo {item.maxStock} disponibili
-                      </span>
+                  {/* nome prodotto, prezzo originale, prezzo scontato e gestione disponibilità */}
+                  <div className={styles.itemInfo}>
+                    <h3 className={styles.itemName}>{item.name}</h3>
+
+                    {item.discount > 0 ? (
+                      <div className={styles.priceGroup}>
+                        <span className={styles.originalPrice}>
+                          {formatPrice(item.price)}
+                        </span>
+                        <span className={styles.discountedPrice}>
+                          {formatPrice(discountedPrice)}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className={styles.itemPrice}>{formatPrice(item.price)}</p>
+                    )}
+
+                    <span className={item.maxStock > 0 ? styles.inStock : styles.outOfStock}>
+                      {item.maxStock > 0
+                        ? item.maxStock < 5
+                          ? `Solo ${item.maxStock} rimasti`
+                          : 'Disponibile'
+                        : 'Non disponibile'}
+                    </span>
+                  </div>
+
+                  {/* gestione di aggiungere o togliere lo stesso prodotto + rimuove il prodotto dal carrello */}
+                  <div className={styles.itemActions}>
+                    <div className={styles.quantityControls}>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item.slug, item.quantity - 1)}
+                      >
+                        −
+                      </button>
+                      <span className={styles.quantity}>{item.quantity}</span>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item.slug, item.quantity + 1)}
+                        disabled={item.quantity >= item.maxStock}
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                </div>
 
-                <div className={styles.itemActions}>
-                  <div className={styles.quantityControls}>
                     <button
-                      className={styles.quantityButton}
-                      onClick={() => updateQuantity(item.slug, item.quantity - 1)}
+                      className={styles.removeButton}
+                      onClick={() => removeItem(item.slug)}
                     >
-                      −
-                    </button>
-                    <span className={styles.quantity}>{item.quantity}</span>
-                    <button
-                      className={styles.quantityButton}
-                      onClick={() => updateQuantity(item.slug, item.quantity + 1)}
-                      disabled={item.quantity >= item.maxStock}
-                    >
-                      +
+                      Rimuovi
                     </button>
                   </div>
 
-                  <button
-                    className={styles.removeButton}
-                    onClick={() => removeItem(item.slug)}
-                  >
-                    Rimuovi
-                  </button>
+                  {/* prezzo totale */}
+                  <div className={styles.itemTotal}>
+                    {formatPrice(totalItemPrice)}
+                  </div>
                 </div>
-
-                <div className={styles.itemTotal}>
-                  {formatPrice(item.price * item.quantity)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
+
+          {/* RIEPILOGO ORDINE */}
           <div className={styles.cartSummary}>
             <div className={styles.summaryCard}>
               <h3 className={styles.summaryTitle}>Riepilogo Ordine</h3>
 
+
+              {/* subtotale */}
               <div className={styles.summaryRow}>
                 <span>Subtotale</span>
                 <span>{formatPrice(totalPrice)}</span>
               </div>
 
+
+              {/* spedizione */}
               <div className={styles.summaryRow}>
                 <span>Spedizione</span>
                 <span>
@@ -155,10 +197,14 @@ const handleClearCart = () => {
                 </span>
               </div>
 
+
+              {/* totale */}
               <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                 <span>Totale</span>
                 <span>
-                  {formatPrice(totalPrice + (totalPrice >= freeShippingThreshold ? 0 : 5.99))}
+                  {formatPrice(
+                    totalPrice + (totalPrice >= freeShippingThreshold ? 0 : 5.99)
+                  )}
                 </span>
               </div>
 
@@ -169,19 +215,24 @@ const handleClearCart = () => {
               <Link to="/gallery" className={styles.continueShoppingButton}>
                 Continua lo Shopping
               </Link>
+
               <button className={styles.clearCartButton} onClick={() => setIsModalOpen(true)}>
                 Svuota Carrello
               </button>
+
             </div>
           </div>
+
         </div>
       </div>
+
       <ConfirmModal
-     isOpen={isModalOpen}
-  onConfirm={handleClearCart}
-  onCancel={() => setIsModalOpen(false)}
-  message="Sei sicuro di voler svuotare il carrello?"
+        isOpen={isModalOpen}
+        onConfirm={handleClearCart}
+        onCancel={() => setIsModalOpen(false)}
+        message="Sei sicuro di voler svuotare il carrello?"
       />
+
     </div>
   );
 };

@@ -1,42 +1,37 @@
-
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '../context/AppContext'; 
 import styles from './ProductCard.module.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useRef } from 'react'; // Importa useRef
+import TooltipPortal from './TooltipPortal'; 
 
 const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) => {
   const { addToCart, cart, wishlist = [], toggleWishlist, showAlert } = useAppContext();
-
+  const wishlistButtonRef = useRef(null); // Crea un ref per il bottone del cuore
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-
     if (product.stock === 0) return;
-
 
     const cartItem = cart.find(item => item.slug === product.slug);
     const currentQuantity = cartItem ? cartItem.quantity : 0;
 
-
     if (currentQuantity >= product.stock) {
       showAlert(`Hai già aggiunto tutte le ${product.stock} unità di "${product.name}" al carrello.`, 'error');
-
       return;
     }
 
-    // if (product.stock < cartProd.maxStock) {
     addToCart({
       slug: product.slug,
       name: product.name,
       price: product.price,
       image: product.img_url,
+      discount: product.discount,
       quantity: 1,
       maxStock: product.stock
-
     });
-
-
   };
 
   const formatPrice = (price) => {
@@ -46,31 +41,42 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
     }).format(price);
   };
 
-  const isInWishlist = wishlist.some(item => item.id === product.id);
-
+  const isProductInWishlist = wishlist.some(item => item.slug === product.slug);
 
   return (
     <Link to={`/product/${product.slug}`} className={`${styles.card} ${viewMode === 'list' ? styles.cardList : ''}`}>
-      <div className={styles.imageContainer}>
-        {showWishlistButton && (
+      {/* Contenitore per l'icona Wishlist - Il tooltip verrà renderizzato separatamente con un Portal */}
+      {showWishlistButton && (
+        <div className={styles.wishlistIconContainer}>
           <button
+            ref={wishlistButtonRef} // Assegna il ref al bottone
             className={styles.wishlistIcon}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               toggleWishlist(product);
 
-              if (wishlist.some(item => item.slug === product.slug)) {
+              if (isProductInWishlist) {
                 showAlert(`"${product.name}" rimosso dai preferiti.`, 'error');
               } else {
                 showAlert(`"${product.name}" aggiunto ai preferiti!`, 'success');
               }
             }}
           >
-            {wishlist.some(item => item.slug === product.slug) ? '❤️' : '🤍'}
+            {isProductInWishlist ?
+              <FaHeart style={{ color: 'red' }} />
+              :
+              <FaRegHeart />
+            }
           </button>
-        )}
+          {/* ✨ Renderizza il tooltip tramite il Portal, passando il ref al bottone del cuore */}
+          <TooltipPortal targetRef={wishlistButtonRef}>
+            {isProductInWishlist ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+          </TooltipPortal>
+        </div>
+      )}
 
+      <div className={styles.imageContainer}>
         <img
           src={product.img_url}
           alt={product.name}
@@ -85,13 +91,7 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
           </span>
         )}
 
-        {product.stock === 0 && (
-          <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
-            Esaurito
-          </span>
-        )}
       </div>
-
 
       <div className={styles.content}>
         <h3 className={styles.name}>{product.name}</h3>
@@ -125,11 +125,9 @@ const ProductCard = ({ product, showWishlistButton = true, viewMode = 'grid' }) 
             {product.stock === 0 ? 'Esaurito' : '🛒'}
           </button>
         </div>
-
       </div>
     </Link>
   );
 };
 
 export default ProductCard;
-

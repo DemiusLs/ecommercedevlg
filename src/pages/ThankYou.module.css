@@ -1,0 +1,41 @@
+.thankYou {
+  padding: 4rem 1rem;
+  text-align: center;
+  background-color: #f6f6f6;
+}
+
+.thankYou .container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.thankYou h1 {
+  color: #4caf50;
+  margin-bottom: 1rem;
+}
+
+.thankYou p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.backButton {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #43a047;
+}

@@ -67,7 +67,8 @@ const CheckoutForm = ({ cart, getSubtotal, getDiscountAmount, getShippingCost, g
         if (result.paymentIntent.status === "succeeded") {
           alert("✅ Ordine completato!");
           clearCart();
-          navigate("/");
+          navigate("/thank-you");
+
         }
       }
     } catch (err) {

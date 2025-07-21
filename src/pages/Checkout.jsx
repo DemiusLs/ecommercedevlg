@@ -92,6 +92,7 @@ const Checkout = () => {
                 getShippingCost={getShippingCost}
                 clearCart={clearCart}
                 navigate={navigate}
+                formatPrice={formatPrice}
               />
             </Elements>
           </div>

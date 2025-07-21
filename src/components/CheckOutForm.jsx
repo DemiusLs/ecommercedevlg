@@ -1,6 +1,6 @@
 // src/components/CheckoutForm.jsx
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import styles from './Checkout.module.css';
+import styles from '../pages/Checkout.module.css';
 import axios from 'axios';
 import { useAppContext } from '../context/AppContext';
 
@@ -10,7 +10,7 @@ const CheckoutForm = ({
     isSubmitting, setIsSubmitting,
     discountValue, couponCode,
     getTotal, getDiscountAmount, getShippingCost, getSubtotal,
-    clearCart, navigate
+    clearCart, navigate, formatPrice
 }) => {
     const stripe = useStripe();
     const elements = useElements();
@@ -32,7 +32,7 @@ const CheckoutForm = ({
         if (!formData.firstName) newErrors.firstName = 'Nome richiesto';
         if (!formData.lastName) newErrors.lastName = 'Cognome richiesto';
         if (!formData.email || !formData.email.includes('@')) newErrors.email = 'Email valida richiesta';
-        if (!formData.phone) newErrors.phone = 'Telefono richiesto';
+        if (!formData.phone ) newErrors.phone = 'Telefono richiesto';
         if (!formData.address) newErrors.address = 'Indirizzo richiesto';
         if (!formData.city) newErrors.city = 'Città richiesta';
         if (!formData.postalCode) newErrors.postalCode = 'CAP richiesto';
@@ -111,10 +111,204 @@ const CheckoutForm = ({
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {/* Tutti i campi del form come nel codice che hai già */}
-            {/* CardElement + Termini + Pulsante conferma */}
-        </form>
+
+        <>
+            < div className={styles.checkoutForm} >
+                <form onSubmit={handleSubmit}>
+                    {/* Sezione Contatto */}
+                    <div className={styles.section}>
+                        <h2 className={styles.sectionTitle}>Informazioni di contatto</h2>
+                        <div className={styles.formGrid}>
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    placeholder="Nome *"
+                                    value={formData.firstName}
+                                    onChange={handleInputChange}
+                                    className={errors.firstName ? styles.inputError : ''}
+                                />
+                                {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="text"
+                                    name="lastName"
+                                    placeholder="Cognome *"
+                                    value={formData.lastName}
+                                    onChange={handleInputChange}
+                                    className={errors.lastName ? styles.inputError : ''}
+                                />
+                                {errors.lastName && <span className={styles.error}>{errors.lastName}</span>}
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Email *"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    className={errors.email ? styles.inputError : ''}
+                                />
+                                {errors.email && <span className={styles.error}>{errors.email}</span>}
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="Telefono *"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                    className={errors.phone ? styles.inputError : ''}
+                                />
+                                {errors.phone && <span className={styles.error}>{errors.phone}</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sezione Indirizzo */}
+                    <div className={styles.section}>
+                        <h2 className={styles.sectionTitle}>Indirizzo di fatturazione</h2>
+                        <div className={styles.formGrid}>
+                            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    placeholder="Indirizzo *"
+                                    value={formData.address}
+                                    onChange={handleInputChange}
+                                    className={errors.address ? styles.inputError : ''}
+                                />
+                                {errors.address && <span className={styles.error}>{errors.address}</span>}
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="Città *"
+                                    value={formData.city}
+                                    onChange={handleInputChange}
+                                    className={errors.city ? styles.inputError : ''}
+                                />
+                                {errors.city && <span className={styles.error}>{errors.city}</span>}
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="text"
+                                    name="postalCode"
+                                    placeholder="CAP *"
+                                    value={formData.postalCode}
+                                    onChange={handleInputChange}
+                                    className={errors.postalCode ? styles.inputError : ''}
+                                />
+                                {errors.postalCode && <span className={styles.error}>{errors.postalCode}</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Metodo di pagamento */}
+                    <div className={styles.section}>
+                        <h2 className={styles.sectionTitle}>Metodo di pagamento</h2>
+
+                        <div className={styles.paymentMethods}>
+                            <label className={styles.paymentMethod}>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="card"
+                                    checked={formData.paymentMethod === 'card'}
+                                    onChange={handleInputChange}
+                                />
+                                <span>💳 Carta di credito</span>
+                            </label>
+
+                            <label className={styles.paymentMethod}>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="paypal"
+                                    checked={formData.paymentMethod === 'paypal'}
+                                    onChange={handleInputChange}
+                                />
+                                <span>🅿️ PayPal</span>
+                            </label>
+                        </div>
+
+                        {formData.paymentMethod === 'card' && (
+                            <div className={styles.cardForm}>
+
+                                <div className={styles.inputGroup}>
+                                    <input
+                                        type="text"
+                                        name="cardNumber"
+                                        placeholder="Numero carta *"
+                                        value={formData.cardNumber}
+                                        onChange={handleInputChange}
+                                        className={errors.cardNumber ? styles.inputError : ''}
+                                    />
+                                    {errors.cardNumber && <span className={styles.error}>{errors.cardNumber}</span>}
+                                </div>
+
+                                <div className={styles.formGrid}>
+                                    <div className={styles.inputGroup}>
+                                        <input
+                                            type="text"
+                                            name="expiryDate"
+                                            placeholder="MM/AA *"
+                                            value={formData.expiryDate}
+                                            onChange={handleInputChange}
+                                            className={errors.expiryDate ? styles.inputError : ''}
+                                        />
+                                        {errors.expiryDate && <span className={styles.error}>{errors.expiryDate}</span>}
+                                    </div>
+
+                                    <div className={styles.inputGroup}>
+                                        <input
+                                            type="text"
+                                            name="cvv"
+                                            placeholder="CVV *"
+                                            value={formData.cvv}
+                                            onChange={handleInputChange}
+                                            className={errors.cvv ? styles.inputError : ''}
+                                        />
+                                        {errors.cvv && <span className={styles.error}>{errors.cvv}</span>}
+                                    </div>
+                                </div>
+
+                            </div>
+                        )}
+
+                    </div>
+
+                    {/* Termini e condizioni */}
+                    <label className={styles.checkbox}>
+                        <input
+                            type="checkbox"
+                            name="terms"
+                            checked={formData.terms}
+                            onChange={handleInputChange}
+                        />
+                        <span>Accetto i termini e condizioni *</span>
+                    </label>
+                    {errors.terms && <span className={styles.error}>{errors.terms}</span>}
+
+                    {/* Pulsante conferma */}
+                    <button
+                        type="submit"
+                        className={styles.submitButton}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Elaborazione...' : `Conferma Ordine - ${formatPrice(getTotal())}`}
+                    </button>
+                </form>
+            </div >
+        </>
+
     );
 };
 

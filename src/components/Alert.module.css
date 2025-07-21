@@ -1,0 +1,30 @@
+.alert {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+  font-weight: 500;
+}
+
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.success {
+  background-color: #4caf50; 
+}
+
+.error {
+  background-color: #f44336; 
+}
+
+
+

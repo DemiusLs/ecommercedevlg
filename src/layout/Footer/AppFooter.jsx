@@ -2,6 +2,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './AppFooter.module.css';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
+
 
 
 const AppFooter = () => {
@@ -15,10 +17,17 @@ const AppFooter = () => {
               Stampe d'arte di alta qualità nel formato 45x75 cm per trasformare i tuoi spazi.
             </p>
             <div className={styles.social}>
-              <a href="#" className={styles.socialLink}>📘</a>
-              <a href="#" className={styles.socialLink}>📷</a>
-              <a href="#" className={styles.socialLink}>🐦</a>
+              <a href="https://facebook.com" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <Facebook size={20} strokeWidth={1.5} />
+              </a>
+              <a href="https://instagram.com" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <Instagram size={20} strokeWidth={1.5} />
+              </a>
+              <a href="https://twitter.com" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <Twitter size={20} strokeWidth={1.5} />
+              </a>
             </div>
+
           </div>
 
           <div className={styles.section}>
@@ -28,16 +37,6 @@ const AppFooter = () => {
               <Link to="/about" className={styles.link}>Chi siamo</Link>
               <Link to="/gallery" className={styles.link}>Galleria</Link>
               <Link to="/contact" className={styles.link}>Contatti</Link>
-            </nav>
-          </div>
-
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Servizio Clienti</h4>
-            <nav className={styles.links}>
-              <Link to="/shipping" className={styles.link}>Spedizioni</Link>
-              <Link to="/returns" className={styles.link}>Resi</Link>
-              <Link to="/faq" className={styles.link}>FAQ</Link>
-              <Link to="/privacy" className={styles.link}>Privacy</Link>
             </nav>
           </div>
 

@@ -67,7 +67,8 @@ const CheckoutForm = ({ cart, getSubtotal, getDiscountAmount, getShippingCost, g
         if (result.paymentIntent.status === "succeeded") {
           alert("✅ Ordine completato!");
           clearCart();
-          navigate("/");
+          navigate("/thank-you");
+
         }
       }
     } catch (err) {
@@ -95,6 +96,7 @@ const CheckoutForm = ({ cart, getSubtotal, getDiscountAmount, getShippingCost, g
       <h3>Metodo di pagamento</h3>
 
       <div className={styles.formGroup}>
+        
         <label><input type="radio" name="paymentMethod" value="card" checked={formData.paymentMethod === "card"} onChange={handleChange} /> Carta di credito</label>
         <label><input type="radio" name="paymentMethod" value="paypal" checked={formData.paymentMethod === "paypal"} onChange={handleChange} /> PayPal</label>
       </div>

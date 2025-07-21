@@ -15,6 +15,7 @@ import WishlistPage from './pages/WishlistPage';
 import Compare from './pages/Compare';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import ThankYou from "./pages/ThankYou";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/compare" element={<Compare />} />

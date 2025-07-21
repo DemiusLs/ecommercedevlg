@@ -1,15 +1,116 @@
-// src/pages/Checkout.jsx
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import axios from 'axios';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
 
-import { useAppContext } from '../context/AppContext';
-import CheckoutForm from '../components/CheckOutForm';
-import styles from './Checkout.module.css';
+import { useAppContext } from "../context/AppContext";
+import styles from "./Checkout.module.css";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+const CheckoutForm = ({ cart, getSubtotal, getDiscountAmount, getShippingCost, getTotal, formatPrice, discountValue, couponCode, setCouponCode, couponError, applyCoupon, clearCart }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address1: "",
+    address2: "",
+    postalCode: "",
+    terms: false,
+    paymentMethod: "card"
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    setLoading(true);
+
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/create-payment-intent`, {
+        amount: Math.round(getTotal() * 100),
+      });
+
+      const result = await stripe.confirmCardPayment(data.client_secret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            phone: formData.phone,
+            address: {
+              line1: formData.address1,
+              line2: formData.address2,
+              postal_code: formData.postalCode
+            }
+          }
+        }
+      });
+
+      if (result.error) {
+        alert(result.error.message);
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          alert("✅ Ordine completato!");
+          clearCart();
+          navigate("/");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Errore durante il pagamento");
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className={styles.checkoutForm}>
+      <h3>Indirizzo di fatturazione</h3>
+
+      <div className={styles.formGroup}>
+        <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Nome" required />
+        <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Cognome" required />
+        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
+        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Telefono" required />
+        <input name="address1" value={formData.address1} onChange={handleChange} placeholder="Indirizzo" required />
+        <input name="address2" value={formData.address2} onChange={handleChange} placeholder="Indirizzo (opzionale)" />
+        <input name="postalCode" value={formData.postalCode} onChange={handleChange} placeholder="CAP" required />
+      </div>
+
+      <h3>Metodo di pagamento</h3>
+
+      <div className={styles.formGroup}>
+        <label><input type="radio" name="paymentMethod" value="card" checked={formData.paymentMethod === "card"} onChange={handleChange} /> Carta di credito</label>
+        <label><input type="radio" name="paymentMethod" value="paypal" checked={formData.paymentMethod === "paypal"} onChange={handleChange} /> PayPal</label>
+      </div>
+
+      <CardElement />
+
+      <div className={styles.formGroup}>
+        <label><input type="checkbox" name="terms" checked={formData.terms} onChange={handleChange} required /> Accetto i termini e condizioni</label>
+      </div>
+
+      <button type="submit" disabled={!stripe || loading || !formData.terms}>
+        {loading ? "Elaborazione..." : `Conferma Ordine - ${formatPrice(getTotal())}`}
+      </button>
+    </form>
+  );
+};
 
 const Checkout = () => {
   const { cart, clearCart } = useAppContext();
@@ -18,12 +119,6 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState('');
   const [discountValue, setDiscountValue] = useState(0);
   const [couponError, setCouponError] = useState('');
-  const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
-    address: '', city: '', postalCode: '', terms: false
-  });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getDiscountedPrice = (item) => {
     return item.discount ? item.price - (item.price * item.discount) / 100 : item.price;
@@ -75,54 +170,38 @@ const Checkout = () => {
       <div className={styles.container}>
         <h1 className={styles.title}>Checkout</h1>
         <div className={styles.checkoutGrid}>
-          <div className={styles.checkoutForm}>
-            <Elements stripe={stripePromise}>
-              <CheckoutForm
-                formData={formData}
-                setFormData={setFormData}
-                errors={errors}
-                setErrors={setErrors}
-                isSubmitting={isSubmitting}
-                setIsSubmitting={setIsSubmitting}
-                discountValue={discountValue}
-                couponCode={couponCode}
-                getTotal={getTotal}
-                getSubtotal={getSubtotal}
-                getDiscountAmount={getDiscountAmount}
-                getShippingCost={getShippingCost}
-                clearCart={clearCart}
-                navigate={navigate}
-                formatPrice={formatPrice}
-              />
-            </Elements>
-          </div>
+          <Elements stripe={stripePromise}>
+            <CheckoutForm
+              cart={cart}
+              getSubtotal={getSubtotal}
+              getDiscountAmount={getDiscountAmount}
+              getShippingCost={getShippingCost}
+              getTotal={getTotal}
+              formatPrice={formatPrice}
+              discountValue={discountValue}
+              couponCode={couponCode}
+              setCouponCode={setCouponCode}
+              couponError={couponError}
+              applyCoupon={applyCoupon}
+              clearCart={clearCart}
+            />
+          </Elements>
 
           <div className={styles.orderSummary}>
             <div className={styles.summaryCard}>
               <h3 className={styles.summaryTitle}>Riepilogo Ordine</h3>
 
               <div className={styles.orderItems}>
-                {cart.map((item, index) => {
-                  const full = item.price * item.quantity;
-                  const discounted = getDiscountedPrice(item) * item.quantity;
-                  return (
-                    <div key={index} className={styles.orderItem}>
-                      <img src={item.img_url} alt={item.name} className={styles.itemImage} />
-                      <div className={styles.itemDetails}>
-                        <span>{item.name}</span>
-                        <span>Qty: {item.quantity}</span>
-                      </div>
-                      {item.discount > 0 ? (
-                        <div className={styles.priceGroup}>
-                          <span className={styles.originalPrice}>{formatPrice(full)}</span>
-                          <span className={styles.discountedPrice}>{formatPrice(discounted)}</span>
-                        </div>
-                      ) : (
-                        <span>{formatPrice(full)}</span>
-                      )}
+                {cart.map((item, index) => (
+                  <div key={index} className={styles.orderItem}>
+                    <img src={item.img_url} alt={item.name} className={styles.itemImage} />
+                    <div className={styles.itemDetails}>
+                      <span>{item.name}</span>
+                      <span>Qty: {item.quantity}</span>
                     </div>
-                  );
-                })}
+                    <span>{formatPrice(getDiscountedPrice(item) * item.quantity)}</span>
+                  </div>
+                ))}
               </div>
 
               <div className={styles.couponSection}>
@@ -145,7 +224,7 @@ const Checkout = () => {
                 {couponError && <div className={styles.error}>{couponError}</div>}
                 {discountValue > 0 && (
                   <div className={styles.appliedCoupon}>
-                    <span>Codice "{couponCode}" applicato - Sconto {discountValue}%</span>
+                    <span>Sconto {discountValue}% applicato</span>
                     <button type="button" onClick={() => {
                       setDiscountValue(0);
                       setCouponCode('');

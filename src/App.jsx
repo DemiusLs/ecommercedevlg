@@ -13,8 +13,10 @@ import NotFound from './pages/NotFound/NotFound.jsx';
 import WelcomePopup from './components/WelcomePopup.jsx';
 import WishlistPage from './pages/WishlistPage';
 import Compare from './pages/Compare';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
-
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 
 function App() {
@@ -25,7 +27,9 @@ function App() {
     
       <AppProvider>
         <GuestLayout>
+              <Elements stripe={stripePromise}>
           <Routes>
+          
             <Route path="/" element={<Homepage />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/search" element={<Gallery />} />
@@ -37,7 +41,9 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/compare" element={<Compare />} />
             <Route path="*" element={<NotFound />} />
+             
           </Routes>
+         </Elements>
           <WelcomePopup />
         </GuestLayout>
       </AppProvider>    
